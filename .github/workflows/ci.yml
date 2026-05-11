@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: insyrtcrm
+          POSTGRES_USER: insyrtcrm
+          POSTGRES_PASSWORD: insyrtcrm
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      SECRET_KEY: ci-secret-key-not-used-in-production
+      DB_NAME: insyrtcrm
+      DB_USER: insyrtcrm
+      DB_PASSWORD: insyrtcrm
+      DB_HOST: localhost
+      DB_PORT: 5432
+      REDIS_URL: redis://localhost:6379/0
+      DJANGO_SETTINGS_MODULE: insyrtcrm.settings.dev
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Ruff lint
+        run: uv run ruff check .
+
+      - name: Ruff format check
+        run: uv run ruff format --check .
+
+      - name: Django system check
+        run: uv run python manage.py check
+
+      - name: Run tests
+        run: uv run pytest --cov=apps --cov-report=term-missing
