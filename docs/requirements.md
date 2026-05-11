@@ -275,7 +275,7 @@ Standard-Stages (konfigurierbar im Admin) / Default stages (configurable in admi
 
 | ID | Deutsch | English |
 |---|---|---|
-| TR-SD-01 | Unit insyrtcrm.service startet uvicorn unter dem User insyrtcrm; Restart=on-failure; bindet an 127.0.0.1:8000. | Unit insyrtcrm.service starts uvicorn under the insyrtcrm user; Restart=on-failure; binds to 127.0.0.1:8000. |
+| TR-SD-01 | Unit insyrtcrm.service startet uvicorn unter dem User insyrtcrm; Restart=on-failure; bindet an 127.0.0.1:8012. | Unit insyrtcrm.service starts uvicorn under the insyrtcrm user; Restart=on-failure; binds to 127.0.0.1:8012. |
 | TR-SD-02 | Unit insyrtcrm-worker.service startet den Django-Q2-Cluster unter demselben Benutzer. | Unit insyrtcrm-worker.service starts the Django-Q2 cluster under the same user. |
 | TR-SD-03 | Beide Units verwenden EnvironmentFile=/etc/insyrtcrm/insyrtcrm.env (mode 0640, Group insyrtcrm). | Both units use EnvironmentFile=/etc/insyrtcrm/insyrtcrm.env (mode 0640, group insyrtcrm). |
 | TR-SD-04 | Logs gehen an journald; logrotate ist nicht erforderlich, journald-Größenlimit wird gesetzt. | Logs go to journald; logrotate is not required, journald size limit is configured. |
@@ -285,7 +285,7 @@ Standard-Stages (konfigurierbar im Admin) / Default stages (configurable in admi
 
 | ID | Deutsch | English |
 |---|---|---|
-| TR-NX-01 | nginx terminiert TLS auf 443 und leitet an 127.0.0.1:8000 weiter. | nginx terminates TLS on 443 and forwards to 127.0.0.1:8000. |
+| TR-NX-01 | nginx terminiert TLS auf 443 und leitet an 127.0.0.1:8012 weiter. | nginx terminates TLS on 443 and forwards to 127.0.0.1:8012. |
 | TR-NX-02 | Port 80 leitet permanent (HTTP 301) auf HTTPS um, außer für die ACME-Challenge. | Port 80 redirects permanently (HTTP 301) to HTTPS, except for the ACME challenge. |
 | TR-NX-03 | Zertifikat wird über den bereits installierten certbot-Client geholt und automatisch erneuert (systemd timer). | Certificate is obtained via the already installed certbot client and renewed automatically (systemd timer). |
 | TR-NX-04 | HSTS, X-Content-Type-Options, X-Frame-Options=DENY, Referrer-Policy sind gesetzt. | HSTS, X-Content-Type-Options, X-Frame-Options=DENY, Referrer-Policy are set. |

@@ -1,0 +1,19 @@
+[Unit]
+Description=insyrtcrm ASGI application (uvicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=insyrtcrm
+Group=insyrtcrm
+WorkingDirectory=/opt/insyrtcrm
+EnvironmentFile=/etc/insyrtcrm/insyrtcrm.env
+ExecStart=/opt/insyrtcrm/.venv/bin/uvicorn insyrtcrm.asgi:application \
+    --host 127.0.0.1 \
+    --port 8012 \
+    --workers 2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

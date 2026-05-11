@@ -183,9 +183,9 @@ References: §5.2 (TR-SU-01..05), §5.3 (TR-DP-01..14), §5.4 (TR-SD-01..05), §
 
 - [ ] `deploy/create_service_user.sh` per TR-DP-01..07. Run as root, idempotent, sets up `insyrtcrm` user, `/opt/insyrtcrm`, locked shell, GitHub PAT in git-credentials, git credential helper.
 - [ ] `deploy/deploy.sh` per TR-DP-08..14. Run as `insyrtcrm` via sudo, takes a git ref, pulls, `uv sync`, `migrate`, `collectstatic`, daemon-reload, restart services, health check.
-- [ ] `deploy/systemd/insyrtcrm.service`: uvicorn under `insyrtcrm` user, binds 127.0.0.1:8000, EnvironmentFile=/etc/insyrtcrm/insyrtcrm.env, Restart=on-failure.
+- [ ] `deploy/systemd/insyrtcrm.service`: uvicorn under `insyrtcrm` user, binds 127.0.0.1:8012, EnvironmentFile=/etc/insyrtcrm/insyrtcrm.env, Restart=on-failure.
 - [ ] `deploy/systemd/insyrtcrm-worker.service`: `manage.py qcluster` under same user.
-- [ ] `deploy/nginx/insyrtcrm.conf`: 443 → 127.0.0.1:8000, 80 → 301 redirect (except `/.well-known/acme-challenge/`), HSTS + security headers, static at `/opt/insyrtcrm/static/`.
+- [ ] `deploy/nginx/insyrtcrm.conf`: 443 → 127.0.0.1:8012, 80 → 301 redirect (except `/.well-known/acme-challenge/`), HSTS + security headers, static at `/opt/insyrtcrm/static/`.
 - [ ] Sample `insyrtcrm.env.example` with all required vars, no real secrets.
 - [ ] Ops guide in `docs/operations.md`: first-time install, deploy, token rotation (90 days, TR-SU-04), backup/restore for Postgres, log access via journalctl.
 

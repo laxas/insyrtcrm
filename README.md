@@ -65,7 +65,7 @@ uv run python manage.py createsuperuser
 uv run python manage.py runserver
 ```
 
-Open [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/).
+Open [http://127.0.0.1:8012/admin/](http://127.0.0.1:8012/admin/).
 
 ### 7. Start the background worker (optional for Phase 0)
 
