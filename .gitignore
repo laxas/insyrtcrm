@@ -8,3 +8,33 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Django
+*.pyc
+__pycache__/
+*.sqlite3
+db.sqlite3-journal
+/staticfiles/
+/media/
+/static_collected/
+local_settings.py
+
+# Environment
+.env
+.env.local
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Logs
+*.log
