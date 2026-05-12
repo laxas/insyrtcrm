@@ -1,0 +1,485 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Help" %} – InsyrtCRM{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+
+  {# Page header #}
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-gray-900">{% trans "Help & User Guide" %}</h1>
+    <p class="mt-1 text-gray-500 text-sm">InsyrtCRM – {% trans "Internal PR lead management" %}</p>
+  </div>
+
+  {# Table of contents #}
+  <nav class="bg-white border border-gray-200 rounded-lg p-5 mb-8">
+    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{% trans "Contents" %}</p>
+    <ol class="space-y-1.5 text-sm text-indigo-600">
+      <li><a href="#first-steps" class="hover:underline">1. {% trans "First steps" %}</a></li>
+      <li><a href="#lead-list" class="hover:underline">2. {% trans "Lead list – filter, sort, search" %}</a></li>
+      <li><a href="#lead-detail" class="hover:underline">3. {% trans "Lead detail view" %}</a></li>
+      <li><a href="#activities" class="hover:underline">4. {% trans "Logging activities" %}</a></li>
+      <li><a href="#assign" class="hover:underline">5. {% trans "Assigning a lead to a team member" %}</a></li>
+      <li><a href="#stages" class="hover:underline">6. {% trans "Pipeline stages & transitions" %}</a></li>
+      <li><a href="#briefing" class="hover:underline">7. {% trans "PR briefing" %}</a></li>
+      <li><a href="#export" class="hover:underline">8. {% trans "Export (CSV & mail-merge letter)" %}</a></li>
+    </ol>
+  </nav>
+
+  {# ------------------------------------------------------------------ #}
+  {# 1. First steps #}
+  {# ------------------------------------------------------------------ #}
+  <section id="first-steps" class="mb-10">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+      1. {% trans "First steps" %}
+    </h2>
+
+    <div class="space-y-4 text-sm text-gray-700">
+      <p>
+        {% blocktrans %}
+        InsyrtCRM replaces the Google Sheet used to track B2B PR leads and customers.
+        Every company in the system moves through a configurable <strong>pipeline</strong> of stages,
+        from first contact to active customer or archive.
+        {% endblocktrans %}
+      </p>
+
+      <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-4">
+        <p class="font-medium text-indigo-800 mb-2">{% trans "Quick orientation" %}</p>
+        <ul class="space-y-1.5 text-indigo-700">
+          <li>
+            <span class="font-medium">{% trans "Leads" %}</span> –
+            {% trans "The main list of all companies. Your starting point for daily work." %}
+          </li>
+          <li>
+            <span class="font-medium">{% trans "Statistics" %}</span> –
+            {% trans "Activity counts and pipeline summary for the team." %}
+          </li>
+          <li>
+            <span class="font-medium">{% trans "Admin" %}</span> –
+            {% trans "Only visible to admins. Used to manage users, stages, and imports." %}
+          </li>
+        </ul>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-100 rounded-lg p-4">
+        <p class="font-medium text-amber-800 mb-1">{% trans "Your role" %}</p>
+        <p class="text-amber-700">
+          {% blocktrans %}
+          There are three roles: <strong>Admin</strong> (full access including user management),
+          <strong>PR-Rep</strong> (can log activities and move stages), and
+          <strong>Read-only</strong> (view only). Your role is set by an admin.
+          {% endblocktrans %}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {# ------------------------------------------------------------------ #}
+  {# 2. Lead list #}
+  {# ------------------------------------------------------------------ #}
+  <section id="lead-list" class="mb-10">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+      2. {% trans "Lead list – filter, sort, search" %}
+    </h2>
+
+    <div class="space-y-4 text-sm text-gray-700">
+      <p>
+        {% blocktrans %}
+        The lead list (<strong>Leads</strong> in the navigation) shows all companies in the system.
+        By default it is sorted by most recent activity.
+        {% endblocktrans %}
+      </p>
+
+      <div class="overflow-hidden rounded-lg border border-gray-200">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+            <tr>
+              <th class="px-4 py-2 text-left">{% trans "Filter field" %}</th>
+              <th class="px-4 py-2 text-left">{% trans "What it does" %}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Search" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "Full-text search across company name, domain, contact names, and activity notes." %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Stage" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "Filter to a specific pipeline stage (e.g. Prospect, Active Customer)." %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Priority" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "A / B / C priority from the PR briefing." %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Fit" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "Fit score 1–5 from the PR briefing." %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Owner" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "Show only leads assigned to a specific team member." %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Last channel" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "Filter by the channel of the most recent activity (Phone, Email, LinkedIn, Letter)." %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Days without activity" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "Show leads that have had no activity for at least N days — useful for finding neglected contacts." %}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        {% blocktrans %}
+        Click any <strong>column header</strong> to sort. Click again to reverse the order.
+        You can personalise which columns are visible using the <em>Columns</em> button above the table.
+        {% endblocktrans %}
+      </p>
+    </div>
+  </section>
+
+  {# ------------------------------------------------------------------ #}
+  {# 3. Lead detail view #}
+  {# ------------------------------------------------------------------ #}
+  <section id="lead-detail" class="mb-10">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+      3. {% trans "Lead detail view" %}
+    </h2>
+
+    <div class="space-y-4 text-sm text-gray-700">
+      <p>
+        {% blocktrans %}
+        Click on a company name to open its detail view. This is the central workspace for a single lead.
+        {% endblocktrans %}
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="bg-white border border-gray-200 rounded-lg p-4">
+          <p class="font-semibold text-gray-800 mb-1">{% trans "Activities tab" %}</p>
+          <p class="text-gray-600">{% trans "All logged contacts with this company — phone calls, emails, LinkedIn messages, letters. Log a new activity here." %}</p>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg p-4">
+          <p class="font-semibold text-gray-800 mb-1">{% trans "Contacts tab" %}</p>
+          <p class="text-gray-600">{% trans "Individual contact persons at the company — name, position, email, phone, LinkedIn." %}</p>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg p-4">
+          <p class="font-semibold text-gray-800 mb-1">{% trans "PR Briefing tab" %}</p>
+          <p class="text-gray-600">{% trans "Qualitative research: media hook, fit score, priority, communication goal, story potential." %}</p>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg p-4">
+          <p class="font-semibold text-gray-800 mb-1">{% trans "History tab" %}</p>
+          <p class="text-gray-600">{% trans "A full audit trail of every stage transition — who moved it, when, and with what comment." %}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# ------------------------------------------------------------------ #}
+  {# 4. Logging activities #}
+  {# ------------------------------------------------------------------ #}
+  <section id="activities" class="mb-10">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+      4. {% trans "Logging activities" %}
+    </h2>
+
+    <div class="space-y-4 text-sm text-gray-700">
+      <p>
+        {% blocktrans %}
+        Every contact attempt — whether successful or not — should be logged as an <strong>activity</strong>.
+        This keeps the history complete and lets the whole team see what has been done.
+        {% endblocktrans %}
+      </p>
+
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <p class="font-semibold text-gray-800 mb-2">{% trans "How to log an activity" %}</p>
+        <ol class="list-decimal list-inside space-y-1.5 text-gray-600">
+          <li>{% trans "Open the company's detail page." %}</li>
+          <li>{% trans "Click the <strong>Activities</strong> tab." %}</li>
+          <li>{% trans "Click the button for the channel you used: <strong>Phone</strong>, <strong>Email</strong>, <strong>LinkedIn</strong>, or <strong>Letter</strong>." %}</li>
+          <li>{% trans "Fill in the form and click Save." %}</li>
+        </ol>
+      </div>
+
+      <p class="font-medium text-gray-800">{% trans "Activity channels and their fields:" %}</p>
+
+      <div class="overflow-hidden rounded-lg border border-gray-200">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+            <tr>
+              <th class="px-4 py-2 text-left">{% trans "Channel" %}</th>
+              <th class="px-4 py-2 text-left">{% trans "Key fields" %}</th>
+              <th class="px-4 py-2 text-left">{% trans "Typical outcomes" %}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Phone" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "Date/time, contact, duration, note" %}</td>
+              <td class="px-4 py-2 text-gray-500">{% trans "Not reached, Voicemail, Callback agreed, Interested, Not interested, Meeting scheduled" %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">Email</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "Date/time, subject, direction, contact, note" %}</td>
+              <td class="px-4 py-2 text-gray-500">{% trans "Sent, Interested, Not interested, Meeting scheduled" %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">LinkedIn</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "Date/time, direction, contact, note" %}</td>
+              <td class="px-4 py-2 text-gray-500">{% trans "Connected, Message sent, Comment, Reaction" %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Letter" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "Date/time, contact, note" %}</td>
+              <td class="px-4 py-2 text-gray-500">{% trans "Sent" %}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bg-blue-50 border border-blue-100 rounded-lg p-4">
+        <p class="font-medium text-blue-800 mb-1">{% trans "Bulk letter logging" %}</p>
+        <p class="text-blue-700">
+          {% blocktrans %}
+          When sending letters to many leads at once: select them in the lead list, click
+          <strong>Export for mail-merge</strong>, then use the <strong>Log letters as sent</strong>
+          button. This creates one activity per company automatically — no need to log each one by hand.
+          {% endblocktrans %}
+        </p>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-100 rounded-lg p-4">
+        <p class="font-medium text-amber-800 mb-1">{% trans "LinkedIn is manual" %}</p>
+        <p class="text-amber-700">
+          {% blocktrans %}
+          InsyrtCRM does <strong>not</strong> connect to LinkedIn. All LinkedIn interactions are
+          logged manually — just like you would note a phone call. Copy the message text or key
+          points into the <em>Note</em> field so the record is useful later.
+          {% endblocktrans %}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {# ------------------------------------------------------------------ #}
+  {# 5. Assigning a lead #}
+  {# ------------------------------------------------------------------ #}
+  <section id="assign" class="mb-10">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+      5. {% trans "Assigning a lead to a team member" %}
+    </h2>
+
+    <div class="space-y-4 text-sm text-gray-700">
+      <p>
+        {% blocktrans %}
+        Every company can have one <strong>Owner</strong> — the team member responsible for it.
+        The owner is shown in the lead list and can be used as a filter.
+        {% endblocktrans %}
+      </p>
+
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <p class="font-semibold text-gray-800 mb-2">{% trans "How to assign or change the owner" %}</p>
+        <ol class="list-decimal list-inside space-y-1.5 text-gray-600">
+          <li>{% trans "Open the company's detail page." %}</li>
+          <li>
+            {% blocktrans %}
+            In the <strong>company info panel</strong> (top of the page), find the <strong>Owner</strong> field
+            and click <em>Edit</em> or use the inline edit control.
+            {% endblocktrans %}
+          </li>
+          <li>{% trans "Select the team member from the dropdown." %}</li>
+          <li>{% trans "Save. The change is recorded immediately." %}</li>
+        </ol>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <p class="font-semibold text-gray-800 mb-2">{% trans "How to see only your own leads" %}</p>
+        <ol class="list-decimal list-inside space-y-1.5 text-gray-600">
+          <li>{% trans "Go to the lead list." %}</li>
+          <li>{% trans "In the filter bar, set <strong>Owner</strong> to your name." %}</li>
+          <li>{% trans "Click <strong>Filter</strong>." %}</li>
+        </ol>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <p class="font-semibold text-gray-800 mb-2">{% trans "How to find unassigned leads" %}</p>
+        <p class="text-gray-600">
+          {% blocktrans %}
+          Set the <strong>Owner</strong> filter to <em>(unassigned)</em> and click Filter.
+          These companies have no responsible person yet.
+          {% endblocktrans %}
+        </p>
+      </div>
+
+      <p class="text-gray-500 text-xs">
+        {% blocktrans %}
+        Note: individual activities also record which team member performed them (<em>Performed by</em>).
+        This is separate from the company owner and is set automatically to the logged-in user when saving an activity.
+        {% endblocktrans %}
+      </p>
+    </div>
+  </section>
+
+  {# ------------------------------------------------------------------ #}
+  {# 6. Pipeline stages #}
+  {# ------------------------------------------------------------------ #}
+  <section id="stages" class="mb-10">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+      6. {% trans "Pipeline stages & transitions" %}
+    </h2>
+
+    <div class="space-y-4 text-sm text-gray-700">
+      <p>
+        {% blocktrans %}
+        Every lead is in exactly one <strong>pipeline stage</strong> at all times. Stages are configured
+        by an admin (in the Admin area under <em>Stages</em>). Common stages are e.g. <em>New</em>,
+        <em>Contacted</em>, <em>Proposal sent</em>, <em>Active customer</em>, <em>Archive</em>.
+        {% endblocktrans %}
+      </p>
+
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <p class="font-semibold text-gray-800 mb-2">{% trans "How to move a lead to a different stage" %}</p>
+        <ol class="list-decimal list-inside space-y-1.5 text-gray-600">
+          <li>{% trans "Open the company's detail page." %}</li>
+          <li>{% trans "Click the <strong>Change stage</strong> button (next to the current stage label at the top)." %}</li>
+          <li>{% trans "Select the new stage from the list." %}</li>
+          <li>{% trans "Optionally add a comment explaining the reason." %}</li>
+          <li>{% trans "Click <strong>Save</strong>." %}</li>
+        </ol>
+      </div>
+
+      <div class="bg-red-50 border border-red-100 rounded-lg p-4">
+        <p class="font-medium text-red-800 mb-1">{% trans "Archiving a lead" %}</p>
+        <p class="text-red-700">
+          {% blocktrans %}
+          When moving to an <strong>archive stage</strong> you will see an option to
+          <em>reduce personal data</em>. If checked, all contact persons are deleted and
+          qualitative briefing text is cleared — only the company name, domain, industry,
+          and stage history are kept. This is <strong>irreversible</strong>. Only tick it
+          when you are sure the lead is permanently closed.
+          {% endblocktrans %}
+        </p>
+      </div>
+
+      <p>
+        {% blocktrans %}
+        Every stage move is recorded in the <strong>History</strong> tab with a timestamp,
+        the user who made the change, and the optional comment.
+        {% endblocktrans %}
+      </p>
+    </div>
+  </section>
+
+  {# ------------------------------------------------------------------ #}
+  {# 7. PR Briefing #}
+  {# ------------------------------------------------------------------ #}
+  <section id="briefing" class="mb-10">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+      7. {% trans "PR briefing" %}
+    </h2>
+
+    <div class="space-y-4 text-sm text-gray-700">
+      <p>
+        {% blocktrans %}
+        The <strong>PR Briefing</strong> tab holds the qualitative research about the lead —
+        everything the team needs to assess fit and prepare an approach.
+        {% endblocktrans %}
+      </p>
+
+      <div class="overflow-hidden rounded-lg border border-gray-200">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+            <tr>
+              <th class="px-4 py-2 text-left">{% trans "Field" %}</th>
+              <th class="px-4 py-2 text-left">{% trans "What to enter" %}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Fit score (1–5)" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "How well does this company fit Insyrt's profile? 5 = excellent fit." %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "PR story potential (1–5)" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "How strong is the potential PR story? 5 = very strong." %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Priority (A / B / C)" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "A = high priority, work soon. B = medium. C = low, revisit later." %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Media hook" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "The angle that makes this company newsworthy." %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Communication goal" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "What should the PR work achieve for this company?" %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Next step" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "Concrete next action — keep this up to date after each contact." %}</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-2 font-medium text-gray-800">{% trans "Last contact" %}</td>
+              <td class="px-4 py-2 text-gray-600">{% trans "Date of the most recent meaningful contact (set manually in the briefing)." %}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  {# ------------------------------------------------------------------ #}
+  {# 8. Export #}
+  {# ------------------------------------------------------------------ #}
+  <section id="export" class="mb-10">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+      8. {% trans "Export (CSV & mail-merge letter)" %}
+    </h2>
+
+    <div class="space-y-4 text-sm text-gray-700">
+
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <p class="font-semibold text-gray-800 mb-2">{% trans "CSV export" %}</p>
+        <p class="text-gray-600">
+          {% blocktrans %}
+          Click <strong>CSV</strong> in the top-right of the lead list to download the currently
+          filtered list as a spreadsheet. The CSV respects all active filters — use filters first,
+          then export.
+          {% endblocktrans %}
+        </p>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <p class="font-semibold text-gray-800 mb-2">{% trans "Mail-merge letter export (Word / XLSX)" %}</p>
+        <ol class="list-decimal list-inside space-y-1.5 text-gray-600">
+          <li>{% trans "In the lead list, tick the checkbox next to each company you want to write to." %}</li>
+          <li>{% trans "Click <strong>Export for mail-merge</strong> in the bulk actions bar." %}</li>
+          <li>
+            {% blocktrans %}
+            An XLSX file downloads with one row per company — ready to use as a
+            <em>Serienbriefquelle</em> in Microsoft Word.
+            {% endblocktrans %}
+          </li>
+          <li>
+            {% blocktrans %}
+            After printing and sending the letters, return to the lead list and click
+            <strong>Log letters as sent</strong>. This automatically creates a <em>Letter – Sent</em>
+            activity for every company in the last export.
+            {% endblocktrans %}
+          </li>
+        </ol>
+      </div>
+
+    </div>
+  </section>
+
+  {# Back to top #}
+  <div class="text-right mt-4 mb-8">
+    <a href="#" class="text-xs text-gray-400 hover:text-indigo-600">&#8593; {% trans "Back to top" %}</a>
+  </div>
+
+</div>
+{% endblock %}

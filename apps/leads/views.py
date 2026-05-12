@@ -270,6 +270,11 @@ def save_columns_view(request):
 
 
 @login_required
+def help_view(request):
+    return render(request, "help/index.html", {})
+
+
+@login_required
 def csv_export_view(request):
     import csv
 

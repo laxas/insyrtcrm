@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = [
     path("", RedirectView.as_view(pattern_name="lead-list", permanent=False)),
+    path("help/", views.help_view, name="help"),
     path("leads/", views.LeadListView.as_view(), name="lead-list"),
     path("leads/export/letter/", views.letter_export_view, name="letter-export"),
     path("leads/export/letter/log/", views.letter_log_view, name="letter-log"),
