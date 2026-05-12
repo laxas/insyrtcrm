@@ -1,7 +1,11 @@
+from pathlib import Path
+
 from .base import *  # noqa: F403
 from .base import env
 
 DEBUG = False
+
+STATIC_ROOT = Path("/opt/insyrtcrm/static")
 
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True

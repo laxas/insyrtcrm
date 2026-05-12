@@ -57,3 +57,10 @@ jobs:
 
       - name: Run tests
         run: uv run pytest --cov=apps --cov-report=term-missing
+
+  shellcheck:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: shellcheck deploy scripts
+        run: shellcheck deploy/*.sh

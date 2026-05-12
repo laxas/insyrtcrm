@@ -6,9 +6,9 @@ After=network.target
 Type=simple
 User=insyrtcrm
 Group=insyrtcrm
-WorkingDirectory=/opt/insyrtcrm
+WorkingDirectory=/opt/insyrtcrm/repo
 EnvironmentFile=/etc/insyrtcrm/insyrtcrm.env
-ExecStart=/opt/insyrtcrm/.venv/bin/uvicorn insyrtcrm.asgi:application \
+ExecStart=/opt/insyrtcrm/repo/.venv/bin/uvicorn insyrtcrm.asgi:application \
     --host 127.0.0.1 \
     --port 8012 \
     --workers 2
