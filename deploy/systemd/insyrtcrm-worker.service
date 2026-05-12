@@ -6,9 +6,9 @@ After=network.target insyrtcrm.service
 Type=simple
 User=insyrtcrm
 Group=insyrtcrm
-WorkingDirectory=/opt/insyrtcrm/repo
+WorkingDirectory=/srv/python/insyrtcrm
 EnvironmentFile=/etc/insyrtcrm/insyrtcrm.env
-ExecStart=/opt/insyrtcrm/repo/.venv/bin/python manage.py qcluster
+ExecStart=/srv/python/insyrtcrm/.venv/bin/python manage.py qcluster
 Restart=on-failure
 RestartSec=5
 

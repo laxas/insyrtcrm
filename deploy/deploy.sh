@@ -4,8 +4,7 @@
 # Does NOT restart services on pre-restart failure (TR-DP-14).
 set -euo pipefail
 
-APP_DIR="/opt/insyrtcrm"
-REPO_DIR="${APP_DIR}/repo"
+REPO_DIR="/srv/python/insyrtcrm"
 REPO_URL="${REPO_URL:-git@github.com:laxas/insyrtcrm.git}"
 VENV="${REPO_DIR}/.venv"
 MANAGE="${VENV}/bin/python ${REPO_DIR}/manage.py"

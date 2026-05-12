@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 # create_service_user.sh — run as root, once per host.
 # Idempotent: safe to re-run.
-# Creates the insyrtcrm service user and the directory/file skeleton.
-# The deploy user (croessmann) owns the app files; insyrtcrm only runs them.
+# Creates the insyrtcrm service user and /etc/insyrtcrm/ env skeleton.
+# The repo lives at /srv/python/insyrtcrm (owned by the deploy user).
 set -euo pipefail
 
 APP_USER="insyrtcrm"
-APP_DIR="/opt/insyrtcrm"
 ENV_DIR="/etc/insyrtcrm"
 DEPLOY_USER="${SUDO_USER:-croessmann}"
 
@@ -23,15 +22,7 @@ usermod --shell /usr/sbin/nologin "${APP_USER}"
 passwd --lock "${APP_USER}" 2>/dev/null || true
 log "Service user '${APP_USER}' configured (nologin, locked password)."
 
-# 2. Application directory — owned by deploy user, world-traversable so
-#    the service user can execute the venv binaries.
-mkdir -p "${APP_DIR}/static"
-chown -R "${DEPLOY_USER}:${DEPLOY_USER}" "${APP_DIR}"
-chmod 755 "${APP_DIR}"
-chmod 755 "${APP_DIR}/static"
-log "Application directory ${APP_DIR} created (owner: ${DEPLOY_USER})."
-
-# 3. Env file directory — owned by deploy user, group insyrtcrm, 0750.
+# 2. Env file directory — owned by deploy user, group insyrtcrm, 0750.
 #    Deploy user needs read access to source vars; service user needs read for EnvironmentFile=.
 mkdir -p "${ENV_DIR}"
 chown "${DEPLOY_USER}:${APP_USER}" "${ENV_DIR}"
@@ -49,4 +40,4 @@ fi
 log "Done. Next steps:"
 log "  1. Edit ${ENV_DIR}/insyrtcrm.env (see insyrtcrm.env.example)"
 log "  2. Run deploy/create_db.sh to create the PostgreSQL role and database"
-log "  3. Run deploy/deploy.sh to clone, migrate, and start services"
+log "  3. Run deploy/deploy.sh to pull, migrate, and start services"

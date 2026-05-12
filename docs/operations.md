@@ -12,7 +12,7 @@ Target: Ubuntu 24.04 LTS with PostgreSQL 16, Redis, certbot, nginx, and `uv` pre
 sudo bash deploy/create_service_user.sh
 ```
 
-This creates the `insyrtcrm` system user (nologin, locked password), sets up `/opt/insyrtcrm/` and the `/etc/insyrtcrm/insyrtcrm.env` placeholder.
+This creates the `insyrtcrm` system user (nologin, locked password), sets up `/srv/python/insyrtcrm/` and the `/etc/insyrtcrm/insyrtcrm.env` placeholder.
 
 ### 2. Create the PostgreSQL database
 
@@ -75,13 +75,13 @@ This clones the repo, installs deps, runs migrations, collects static files, and
 ### 8. Create the initial superuser
 
 ```bash
-/opt/insyrtcrm/repo/.venv/bin/python /opt/insyrtcrm/repo/manage.py createsuperuser
+/srv/python/insyrtcrm/.venv/bin/python /srv/python/insyrtcrm/manage.py createsuperuser
 ```
 
 ### 9. Set up the stats cache schedule
 
 ```bash
-/opt/insyrtcrm/repo/.venv/bin/python /opt/insyrtcrm/repo/manage.py setup_q_schedules
+/srv/python/insyrtcrm/.venv/bin/python /srv/python/insyrtcrm/manage.py setup_q_schedules
 ```
 
 ---
