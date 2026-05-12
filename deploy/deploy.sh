@@ -63,6 +63,9 @@ cd "${REPO_DIR}"
 # Force Python into /opt/uv-python (not into the deploy user's home directory)
 # so the insyrtcrm service user can reach the interpreter.
 export UV_PYTHON_INSTALL_DIR=/opt/uv-python
+sudo mkdir -p /opt/uv-python
+sudo chown "${USER}:insyrtcrm" /opt/uv-python
+sudo chmod 775 /opt/uv-python
 sudo rm -rf "${REPO_DIR}/.venv"
 uv python install 3.14
 uv sync --frozen --no-dev
