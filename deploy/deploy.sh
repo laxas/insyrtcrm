@@ -60,14 +60,25 @@ log "Config OK — DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}"
 log "Syncing dependencies (uv sync)..."
 cd "${REPO_DIR}"
 
-# Always recreate the venv so it is owned by the service user after chown.
-# uv's package cache makes this fast. Python goes to /opt so the insyrtcrm
-# user can reach the interpreter (home directories are not traversable by it).
+# Always recreate the venv owned by the service user after chown.
+# Force Python into /opt/uv-python so it is reachable by the insyrtcrm user.
+# The explicit `uv python install` ensures Python lands in /opt before sync.
 export UV_PYTHON_INSTALL_DIR=/opt/uv-python
 sudo rm -rf "${REPO_DIR}/.venv"
+uv python install 3.14
 uv sync --frozen --no-dev
 sudo chown -R insyrtcrm:insyrtcrm "${REPO_DIR}/.venv"
-[[ -d /opt/uv-python ]] && sudo chmod -R o+rx /opt/uv-python
+
+# Make the Python interpreter's full path traversable for the service user,
+# wherever uv resolved it. o+x on directories = traverse only, not list.
+_python="$(readlink -f "${REPO_DIR}/.venv/bin/python")"
+sudo chmod o+rx "${_python}"
+_dir="${_python%/*}"
+while [[ "${_dir}" != "/" && -n "${_dir}" ]]; do
+    sudo chmod o+x "${_dir}"
+    _dir="${_dir%/*}"
+done
+
 chmod o+rx "${REPO_DIR}"
 
 # 4. Django
