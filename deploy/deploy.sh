@@ -9,6 +9,7 @@ REPO_URL="${REPO_URL:-git@github.com:laxas/insyrtcrm.git}"
 VENV="${REPO_DIR}/.venv"
 MANAGE="${VENV}/bin/python ${REPO_DIR}/manage.py"
 HEALTH_URL="${HEALTH_URL:-https://insyrtcrm.laxas.de/health/}"
+LOCAL_HEALTH_URL="http://127.0.0.1:8012/health/"
 GIT_REF="${1:-main}"
 ENV_FILE="/etc/insyrtcrm/insyrtcrm.env"
 
@@ -89,14 +90,20 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now insyrtcrm.service insyrtcrm-worker.service
 sudo systemctl restart insyrtcrm.service insyrtcrm-worker.service
 
-# 6. Health check
-log "Running health check at ${HEALTH_URL}..."
-HTTP_STATUS=$(curl --silent --output /dev/null --write-out "%{http_code}" \
-    --max-time 10 --insecure "${HEALTH_URL}" || echo "000")
-
-if [[ "${HTTP_STATUS}" != "200" ]]; then
-    die "Health check returned HTTP ${HTTP_STATUS} — check journalctl -u insyrtcrm.service"
+# 6. Health checks — local first (direct to uvicorn), then via nginx+TLS
+log "Running local health check at ${LOCAL_HEALTH_URL}..."
+LOCAL_STATUS=$(curl --silent --output /dev/null --write-out "%{http_code}" \
+    --max-time 10 "${LOCAL_HEALTH_URL}" || echo "000")
+if [[ "${LOCAL_STATUS}" != "200" ]]; then
+    die "Local health check returned HTTP ${LOCAL_STATUS} — check journalctl -u insyrtcrm.service"
 fi
+log "Local health check passed (HTTP 200)."
 
-log "Health check passed (HTTP 200)."
+log "Running external health check at ${HEALTH_URL}..."
+EXT_STATUS=$(curl --silent --output /dev/null --write-out "%{http_code}" \
+    --max-time 10 "${HEALTH_URL}" || echo "000")
+if [[ "${EXT_STATUS}" != "200" ]]; then
+    die "External health check returned HTTP ${EXT_STATUS} — check nginx config and TLS cert"
+fi
+log "External health check passed (HTTP 200)."
 log "Deploy of '${GIT_REF}' complete."
