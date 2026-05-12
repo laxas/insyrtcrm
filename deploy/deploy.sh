@@ -12,8 +12,20 @@ MANAGE="${VENV}/bin/python ${REPO_DIR}/manage.py"
 HEALTH_URL="${HEALTH_URL:-https://localhost/health/}"
 GIT_REF="${1:-main}"
 
+ENV_FILE="/etc/insyrtcrm/insyrtcrm.env"
+
 log() { echo "[deploy] $*"; }
 die() { echo "[deploy] ERROR: $*" >&2; exit 1; }
+
+# Load secrets so manage.py commands have access to DB creds, SECRET_KEY, etc.
+if [[ -f "${ENV_FILE}" ]]; then
+    set -a
+    # shellcheck source=/dev/null
+    source "${ENV_FILE}"
+    set +a
+else
+    die "${ENV_FILE} not found — run create_service_user.sh and fill in secrets first."
+fi
 
 log "Deploying ref '${GIT_REF}'..."
 
@@ -37,10 +49,10 @@ uv sync --frozen --no-dev
 
 # Django
 log "Running migrations..."
-DJANGO_SETTINGS_MODULE=insyrtcrm.settings.prod ${MANAGE} migrate --noinput
+${MANAGE} migrate --noinput
 
 log "Collecting static files..."
-DJANGO_SETTINGS_MODULE=insyrtcrm.settings.prod ${MANAGE} collectstatic --noinput --clear
+${MANAGE} collectstatic --noinput --clear
 
 # Services — only restart after all pre-restart steps have succeeded
 log "Reloading systemd and restarting services..."
