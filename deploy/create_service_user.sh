@@ -31,14 +31,15 @@ chmod 755 "${APP_DIR}"
 chmod 755 "${APP_DIR}/static"
 log "Application directory ${APP_DIR} created (owner: ${DEPLOY_USER})."
 
-# 3. Env file directory — root:insyrtcrm, 0750 so only the service user can read
+# 3. Env file directory — owned by deploy user, group insyrtcrm, 0750.
+#    Deploy user needs read access to source vars; service user needs read for EnvironmentFile=.
 mkdir -p "${ENV_DIR}"
-chown root:"${APP_USER}" "${ENV_DIR}"
+chown "${DEPLOY_USER}:${APP_USER}" "${ENV_DIR}"
 chmod 0750 "${ENV_DIR}"
 
 if [[ ! -f "${ENV_DIR}/insyrtcrm.env" ]]; then
     touch "${ENV_DIR}/insyrtcrm.env"
-    chown root:"${APP_USER}" "${ENV_DIR}/insyrtcrm.env"
+    chown "${DEPLOY_USER}:${APP_USER}" "${ENV_DIR}/insyrtcrm.env"
     chmod 0640 "${ENV_DIR}/insyrtcrm.env"
     log "Created empty ${ENV_DIR}/insyrtcrm.env — fill in all values before starting services."
 else

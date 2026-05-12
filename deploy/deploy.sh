@@ -11,27 +11,12 @@ VENV="${REPO_DIR}/.venv"
 MANAGE="${VENV}/bin/python ${REPO_DIR}/manage.py"
 HEALTH_URL="${HEALTH_URL:-https://localhost/health/}"
 GIT_REF="${1:-main}"
-
 ENV_FILE="/etc/insyrtcrm/insyrtcrm.env"
 
 log() { echo "[deploy] $*"; }
 die() { echo "[deploy] ERROR: $*" >&2; exit 1; }
 
-# Load secrets so manage.py commands have access to DB creds, SECRET_KEY, etc.
-# Use sudo cat — the file is owned root:insyrtcrm (0640) and the deploy user
-# may not be in the insyrtcrm group.
-if sudo test -f "${ENV_FILE}"; then
-    set -a
-    # shellcheck source=/dev/null
-    source <(sudo cat "${ENV_FILE}")
-    set +a
-else
-    die "${ENV_FILE} not found — run create_service_user.sh and fill in secrets first."
-fi
-
-log "Deploying ref '${GIT_REF}'..."
-
-# Clone or pull
+# 1. Pull latest code first so we're always deploying the current state
 if [[ -d "${REPO_DIR}/.git" ]]; then
     log "Fetching latest changes..."
     git -C "${REPO_DIR}" fetch --tags origin
@@ -44,24 +29,36 @@ else
     git -C "${REPO_DIR}" checkout "${GIT_REF}"
 fi
 
-# Dependencies
+log "Deploying ref '${GIT_REF}'..."
+
+# 2. Load secrets — env file is owned by the deploy user (group insyrtcrm, mode 0640)
+if [[ -f "${ENV_FILE}" ]]; then
+    set -a
+    # shellcheck source=/dev/null
+    source "${ENV_FILE}"
+    set +a
+else
+    die "${ENV_FILE} not found — run create_service_user.sh and fill in secrets first."
+fi
+
+# 3. Dependencies
 log "Syncing dependencies (uv sync)..."
 cd "${REPO_DIR}"
 uv sync --frozen --no-dev
 
-# Django
+# 4. Django
 log "Running migrations..."
 ${MANAGE} migrate --noinput
 
 log "Collecting static files..."
 ${MANAGE} collectstatic --noinput --clear
 
-# Services — only restart after all pre-restart steps have succeeded
+# 5. Services — only restart after all pre-restart steps have succeeded
 log "Reloading systemd and restarting services..."
 sudo systemctl daemon-reload
 sudo systemctl restart insyrtcrm.service insyrtcrm-worker.service
 
-# Health check
+# 6. Health check
 log "Running health check at ${HEALTH_URL}..."
 HTTP_STATUS=$(curl --silent --output /dev/null --write-out "%{http_code}" \
     --max-time 10 --insecure "${HEALTH_URL}" || echo "000")
