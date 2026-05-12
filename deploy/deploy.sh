@@ -64,8 +64,8 @@ uv sync --frozen --no-dev
 # Grant the insyrtcrm service user access to the venv via group ownership.
 # uv creates the venv as the calling user; the service user needs to read and
 # execute binaries inside it. chgrp + g+rX is cleaner than world-readable.
-chgrp -R insyrtcrm "${REPO_DIR}/.venv"
-chmod -R g+rX "${REPO_DIR}/.venv"
+sudo chgrp -R insyrtcrm "${REPO_DIR}/.venv"
+sudo chmod -R g+rX "${REPO_DIR}/.venv"
 # The project root itself must be traversable by the service user.
 chmod o+rx "${REPO_DIR}"
 
