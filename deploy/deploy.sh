@@ -60,26 +60,20 @@ log "Config OK — DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}"
 log "Syncing dependencies (uv sync)..."
 cd "${REPO_DIR}"
 
-# Always recreate the venv owned by the service user after chown.
-# Force Python into /opt/uv-python so it is reachable by the insyrtcrm user.
-# The explicit `uv python install` ensures Python lands in /opt before sync.
+# Force Python into /opt/uv-python (not into the deploy user's home directory)
+# so the insyrtcrm service user can reach the interpreter.
 export UV_PYTHON_INSTALL_DIR=/opt/uv-python
 sudo rm -rf "${REPO_DIR}/.venv"
 uv python install 3.14
 uv sync --frozen --no-dev
-sudo chown -R insyrtcrm:insyrtcrm "${REPO_DIR}/.venv"
 
-# Make the Python interpreter's full path traversable for the service user,
-# wherever uv resolved it. o+x on directories = traverse only, not list.
-_python="$(readlink -f "${REPO_DIR}/.venv/bin/python")"
-sudo chmod o+rx "${_python}"
-_dir="${_python%/*}"
-while [[ "${_dir}" != "/" && -n "${_dir}" ]]; do
-    sudo chmod o+x "${_dir}"
-    _dir="${_dir%/*}"
-done
-
-chmod o+rx "${REPO_DIR}"
+# Mirror the permission pattern used by other projects on this server:
+# owner=croessmann, group=insyrtcrm, with group r+X on all files.
+# The insyrtcrm service user is in the insyrtcrm group, so it can read and
+# execute everything without needing ownership of individual files.
+sudo chgrp -R insyrtcrm "${REPO_DIR}"
+sudo chmod -R g+rX "${REPO_DIR}"
+[[ -d /opt/uv-python ]] && sudo chmod -R o+rx /opt/uv-python
 
 # 4. Django
 log "Running migrations..."
