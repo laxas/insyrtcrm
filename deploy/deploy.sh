@@ -30,32 +30,30 @@ fi
 
 log "Deploying ref '${GIT_REF}'..."
 
-# 2. Load secrets — env file is owned by the deploy user (group insyrtcrm, mode 0640)
+# 2. Validate secrets file — Django reads it directly via read_env() in settings/base.py,
+#    so we never source it into bash (values may contain shell-special characters).
 if [[ ! -f "${ENV_FILE}" ]]; then
     die "${ENV_FILE} not found — run create_service_user.sh and fill in secrets first."
 fi
 if [[ ! -r "${ENV_FILE}" ]]; then
     die "${ENV_FILE} exists but is not readable by $(whoami). Run: sudo bash deploy/create_service_user.sh"
 fi
-set -a
-# shellcheck source=/dev/null
-source "${ENV_FILE}"
-set +a
 
-# Always use prod settings for deploys — don't rely on the env file for this.
-export DJANGO_SETTINGS_MODULE="${DJANGO_SETTINGS_MODULE:-insyrtcrm.settings.prod}"
-
-# Failsafe: abort early if required variables are missing rather than letting Django
-# crash deep inside a management command with a confusing error.
+# Failsafe: abort early if required variables are missing or empty.
+# grep -qE avoids shell-interpreting the values entirely.
 _required_vars=(SECRET_KEY DB_NAME DB_USER DB_PASSWORD)
 _missing=()
 for _var in "${_required_vars[@]}"; do
-    [[ -z "${!_var:-}" ]] && _missing+=("${_var}")
+    grep -qE "^${_var}=.+" "${ENV_FILE}" || _missing+=("${_var}")
 done
 if [[ ${#_missing[@]} -gt 0 ]]; then
     die "Missing required variable(s) in ${ENV_FILE}: ${_missing[*]}"
 fi
-log "Config OK — DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}, DB_NAME=${DB_NAME}"
+
+# Always use prod settings for deploys. Django reads all other secrets from
+# ${ENV_FILE} via environ.Env.read_env() in insyrtcrm/settings/base.py.
+export DJANGO_SETTINGS_MODULE=insyrtcrm.settings.prod
+log "Config OK — DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}"
 
 # 3. Dependencies
 log "Syncing dependencies (uv sync)..."
