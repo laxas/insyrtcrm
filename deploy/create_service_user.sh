@@ -30,12 +30,13 @@ chmod 0750 "${ENV_DIR}"
 
 if [[ ! -f "${ENV_DIR}/insyrtcrm.env" ]]; then
     touch "${ENV_DIR}/insyrtcrm.env"
-    chown "${DEPLOY_USER}:${APP_USER}" "${ENV_DIR}/insyrtcrm.env"
-    chmod 0640 "${ENV_DIR}/insyrtcrm.env"
     log "Created empty ${ENV_DIR}/insyrtcrm.env — fill in all values before starting services."
 else
-    log "${ENV_DIR}/insyrtcrm.env already exists — not modified."
+    log "${ENV_DIR}/insyrtcrm.env already exists — secrets untouched."
 fi
+# Always enforce ownership and permissions (safe to re-run after changing DEPLOY_USER).
+chown "${DEPLOY_USER}:${APP_USER}" "${ENV_DIR}/insyrtcrm.env"
+chmod 0640 "${ENV_DIR}/insyrtcrm.env"
 
 log "Done. Next steps:"
 log "  1. Edit ${ENV_DIR}/insyrtcrm.env (see insyrtcrm.env.example)"
