@@ -60,22 +60,14 @@ log "Config OK — DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}"
 log "Syncing dependencies (uv sync)..."
 cd "${REPO_DIR}"
 
-# Put Python in /opt so the insyrtcrm service user can reach it.
-# If the venv currently points into a user home directory, blow it away and
-# let uv recreate it from the system-accessible location.
+# Always recreate the venv so it is owned by the service user after chown.
+# uv's package cache makes this fast. Python goes to /opt so the insyrtcrm
+# user can reach the interpreter (home directories are not traversable by it).
 export UV_PYTHON_INSTALL_DIR=/opt/uv-python
-VENV_PYTHON=$(readlink -f "${REPO_DIR}/.venv/bin/python" 2>/dev/null || true)
-if [[ "${VENV_PYTHON}" == /home/* ]]; then
-    log "Venv Python is under /home — recreating venv under /opt/uv-python..."
-    rm -rf "${REPO_DIR}/.venv"
-fi
+sudo rm -rf "${REPO_DIR}/.venv"
 uv sync --frozen --no-dev
-
-# Transfer venv ownership to the service user so systemd can exec the binaries.
 sudo chown -R insyrtcrm:insyrtcrm "${REPO_DIR}/.venv"
-# Make the Python runtime world-traversable (lives in /opt, not a home dir).
 [[ -d /opt/uv-python ]] && sudo chmod -R o+rx /opt/uv-python
-# The project root must be traversable by the service user.
 chmod o+rx "${REPO_DIR}"
 
 # 4. Django
