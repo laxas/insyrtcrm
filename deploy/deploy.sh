@@ -40,8 +40,6 @@ else
     die "${ENV_FILE} not found — run create_service_user.sh and fill in secrets first."
 fi
 
-log "Env check: DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-<not set>}, DB_NAME=${DB_NAME:-<not set>}"
-
 # 3. Dependencies
 log "Syncing dependencies (uv sync)..."
 cd "${REPO_DIR}"

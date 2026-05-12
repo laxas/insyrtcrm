@@ -6,7 +6,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
 
+# Dev: load .env from project root (gitignored, not present on production).
+# Production: load /etc/insyrtcrm/insyrtcrm.env (owned by deploy user, read by insyrtcrm group).
+# Both calls use overwrite=False so actual shell/systemd env vars always win.
+# read_env silently skips missing files, so order doesn't matter for the absent file.
 environ.Env.read_env(BASE_DIR / ".env", overwrite=False)
+environ.Env.read_env(Path("/etc/insyrtcrm/insyrtcrm.env"), overwrite=False)
 
 SECRET_KEY = env("SECRET_KEY")
 
