@@ -16,5 +16,6 @@ urlpatterns = [
     path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("activities/", include("apps.activities.urls")),
     path("accounts/", include("apps.accounts.urls")),
+    path("stats/", include("apps.stats.urls")),
     path("", include("apps.leads.urls")),  # root → redirect at "" in leads/urls.py
 ]

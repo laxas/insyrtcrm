@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Statistics" %} — InsyrtCRM{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  {# ── Header + date range picker ── #}
+  <div class="flex flex-wrap items-end gap-4">
+    <h1 class="text-xl font-semibold text-gray-900">{% trans "Statistics" %}</h1>
+
+    <form method="get" class="flex flex-wrap items-end gap-3 ml-auto">
+      {# Quick range buttons #}
+      <div class="flex gap-1">
+        <a href="?days=7"
+           class="px-3 py-1 rounded text-sm border {% if days == 7 %}bg-indigo-600 text-white border-indigo-600{% else %}bg-white text-gray-600 border-gray-300 hover:border-indigo-400{% endif %}">7d</a>
+        <a href="?days=30"
+           class="px-3 py-1 rounded text-sm border {% if days == 30 %}bg-indigo-600 text-white border-indigo-600{% else %}bg-white text-gray-600 border-gray-300 hover:border-indigo-400{% endif %}">30d</a>
+        <a href="?days=90"
+           class="px-3 py-1 rounded text-sm border {% if days == 90 %}bg-indigo-600 text-white border-indigo-600{% else %}bg-white text-gray-600 border-gray-300 hover:border-indigo-400{% endif %}">90d</a>
+      </div>
+
+      {# Custom range #}
+      <div class="flex items-end gap-2">
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">{% trans "From" %}</label>
+          <input type="date" name="start" value="{{ start|date:'Y-m-d' }}"
+                 class="border border-gray-300 rounded px-2 py-1 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">{% trans "To" %}</label>
+          <input type="date" name="end" value="{{ end|date:'Y-m-d' }}"
+                 class="border border-gray-300 rounded px-2 py-1 text-sm">
+        </div>
+        <button type="submit"
+                class="px-3 py-1 rounded text-sm bg-indigo-600 text-white hover:bg-indigo-700">
+          {% trans "Apply" %}
+        </button>
+      </div>
+
+      {# Aging threshold #}
+      <div class="flex items-end gap-2">
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">{% trans "Aging threshold (days)" %}</label>
+          <input type="number" name="aging_days" value="{{ aging_threshold }}" min="1" max="365"
+                 class="border border-gray-300 rounded px-2 py-1 text-sm w-20">
+        </div>
+      </div>
+    </form>
+  </div>
+
+  {# ── Row 1: Funnel + Dwell ── #}
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    {# FR-ST-01: Pipeline funnel #}
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-medium text-gray-700">{% trans "Pipeline funnel" %}</h2>
+        <a href="{% url 'stats:export-csv' %}?report=funnel"
+           class="text-xs text-indigo-600 hover:underline">CSV</a>
+      </div>
+      <canvas id="chartFunnel" height="220"></canvas>
+    </div>
+
+    {# FR-ST-05: Stage dwell times #}
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-medium text-gray-700">{% trans "Average days per stage" %}</h2>
+        <a href="{% url 'stats:export-csv' %}?report=dwell"
+           class="text-xs text-indigo-600 hover:underline">CSV</a>
+      </div>
+      <canvas id="chartDwell" height="220"></canvas>
+    </div>
+  </div>
+
+  {# ── Row 2: Activities by channel + by user ── #}
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    {# FR-ST-02: Activities by channel #}
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-medium text-gray-700">
+          {% trans "Activities by channel" %} <span class="text-gray-400 font-normal text-sm">({{ start|date:"d.m.Y" }} – {{ end|date:"d.m.Y" }})</span>
+        </h2>
+        <a href="{% url 'stats:export-csv' %}?report=by_channel&days={{ days }}&start={{ start|date:'Y-m-d' }}&end={{ end|date:'Y-m-d' }}"
+           class="text-xs text-indigo-600 hover:underline">CSV</a>
+      </div>
+      <canvas id="chartByChannel" height="220"></canvas>
+    </div>
+
+    {# FR-ST-03: Activities by user/channel #}
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-medium text-gray-700">
+          {% trans "Activities by user" %}
+        </h2>
+        <a href="{% url 'stats:export-csv' %}?report=by_user&days={{ days }}&start={{ start|date:'Y-m-d' }}&end={{ end|date:'Y-m-d' }}"
+           class="text-xs text-indigo-600 hover:underline">CSV</a>
+      </div>
+      <canvas id="chartByUser" height="220"></canvas>
+    </div>
+  </div>
+
+  {# ── Row 3: Priority/fit heatmap ── #}
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="font-medium text-gray-700">{% trans "Priority / Fit distribution" %}</h2>
+      <a href="{% url 'stats:export-csv' %}?report=priority_fit"
+         class="text-xs text-indigo-600 hover:underline">CSV</a>
+    </div>
+    <div class="max-w-lg">
+      <canvas id="chartPriorityFit" height="220"></canvas>
+    </div>
+  </div>
+
+  {# ── Row 4: Aging table (FR-ST-04) ── #}
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="font-medium text-gray-700">
+        {% trans "Aging report" %} —
+        <span class="font-normal text-gray-500 text-sm">
+          {% blocktrans with t=aging_threshold %}companies in current stage for more than {{ t }} days{% endblocktrans %}
+        </span>
+      </h2>
+      <a href="{% url 'stats:export-csv' %}?report=aging&aging_days={{ aging_threshold }}"
+         class="text-xs text-indigo-600 hover:underline">CSV</a>
+    </div>
+    {% if aging %}
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-200 text-left text-gray-500">
+            <th class="pb-2 pr-4 font-medium">{% trans "Company" %}</th>
+            <th class="pb-2 pr-4 font-medium">{% trans "Stage" %}</th>
+            <th class="pb-2 font-medium text-right">{% trans "Days in stage" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in aging %}
+          <tr class="border-b border-gray-100 hover:bg-gray-50">
+            <td class="py-2 pr-4">
+              <a href="{% url 'lead-detail' row.pk %}" class="text-indigo-600 hover:underline">{{ row.name }}</a>
+            </td>
+            <td class="py-2 pr-4 text-gray-600">{{ row.stage }}</td>
+            <td class="py-2 text-right
+              {% if row.days_in_stage >= 90 %}text-red-600 font-semibold
+              {% elif row.days_in_stage >= 60 %}text-amber-600
+              {% else %}text-gray-700{% endif %}">
+              {{ row.days_in_stage }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-sm text-gray-500">{% trans "No companies exceed the aging threshold." %}</p>
+    {% endif %}
+  </div>
+
+  {# ── Row 5: Dwell table ── #}
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+    <h2 class="font-medium text-gray-700 mb-3">{% trans "Stage dwell time detail" %}</h2>
+    {% if dwell %}
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-gray-200 text-left text-gray-500">
+          <th class="pb-2 pr-4 font-medium">{% trans "Stage" %}</th>
+          <th class="pb-2 pr-4 font-medium text-right">{% trans "Avg days" %}</th>
+          <th class="pb-2 font-medium text-right">{% trans "Transitions" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in dwell %}
+        <tr class="border-b border-gray-100 hover:bg-gray-50">
+          <td class="py-2 pr-4">{{ row.stage }}</td>
+          <td class="py-2 pr-4 text-right text-gray-700">{{ row.avg_days }}</td>
+          <td class="py-2 text-right text-gray-500">{{ row.transitions }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="text-sm text-gray-500">{% trans "No stage transition data yet." %}</p>
+    {% endif %}
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const CHANNEL_COLORS = [
+    '#6366f1','#f59e0b','#10b981','#3b82f6','#ec4899','#8b5cf6','#14b8a6',
+  ];
+  const PRIORITY_COLORS = {
+    'A': '#ef4444', 'B': '#f97316', 'C': '#eab308', 'D': '#22c55e', 'E': '#6b7280',
+  };
+
+  // --- FR-ST-01: Funnel ---
+  const funnelData = {{ funnel_json|safe }};
+  new Chart(document.getElementById('chartFunnel'), {
+    type: 'bar',
+    data: {
+      labels: funnelData.map(r => r.name),
+      datasets: [{
+        label: '{% trans "Companies" %}',
+        data: funnelData.map(r => r.count),
+        backgroundColor: '#6366f1',
+        borderRadius: 4,
+      }],
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true, ticks: { precision: 0 } } },
+    },
+  });
+
+  // --- FR-ST-05: Dwell ---
+  const dwellData = {{ dwell_json|safe }};
+  new Chart(document.getElementById('chartDwell'), {
+    type: 'bar',
+    data: {
+      labels: dwellData.map(r => r.stage),
+      datasets: [{
+        label: '{% trans "Avg days" %}',
+        data: dwellData.map(r => r.avg_days),
+        backgroundColor: '#10b981',
+        borderRadius: 4,
+      }],
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true } },
+    },
+  });
+
+  // --- FR-ST-02: By channel ---
+  const byChannelData = {{ by_channel_json|safe }};
+  new Chart(document.getElementById('chartByChannel'), {
+    type: 'doughnut',
+    data: {
+      labels: byChannelData.map(r => r.label),
+      datasets: [{
+        data: byChannelData.map(r => r.count),
+        backgroundColor: CHANNEL_COLORS,
+      }],
+    },
+    options: {
+      plugins: {
+        legend: { position: 'right' },
+      },
+    },
+  });
+
+  // --- FR-ST-03: By user/channel stacked bar ---
+  const byUserData = {{ by_user_json|safe }};
+  new Chart(document.getElementById('chartByUser'), {
+    type: 'bar',
+    data: {
+      labels: byUserData.users,
+      datasets: byUserData.channels.map((ch, i) => ({
+        label: ch,
+        data: byUserData.matrix.map(row => row[i]),
+        backgroundColor: CHANNEL_COLORS[i % CHANNEL_COLORS.length],
+        borderRadius: 2,
+      })),
+    },
+    options: {
+      scales: {
+        x: { stacked: true },
+        y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } },
+      },
+      plugins: { legend: { position: 'bottom' } },
+    },
+  });
+
+  // --- FR-ST-06: Priority/fit grouped bar ---
+  const pfData = {{ pf_json|safe }};
+  new Chart(document.getElementById('chartPriorityFit'), {
+    type: 'bar',
+    data: {
+      labels: pfData.labels.map(n => 'Fit ' + n),
+      datasets: pfData.datasets.map(ds => ({
+        label: '{% trans "Priority" %} ' + ds.priority,
+        data: ds.data,
+        backgroundColor: PRIORITY_COLORS[ds.priority] || '#9ca3af',
+        borderRadius: 2,
+      })),
+    },
+    options: {
+      plugins: { legend: { position: 'bottom' } },
+      scales: { x: { beginAtZero: true }, y: { beginAtZero: true, ticks: { precision: 0 } } },
+    },
+  });
+})();
+</script>
+{% endblock %}

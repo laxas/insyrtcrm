@@ -21,6 +21,7 @@
       <div class="flex items-center gap-6">
         <a href="{% url 'lead-list' %}" class="font-bold text-indigo-600 text-lg tracking-tight">InsyrtCRM</a>
         <a href="{% url 'lead-list' %}" class="text-sm text-gray-600 hover:text-indigo-600">{% trans "Leads" %}</a>
+        <a href="{% url 'stats:dashboard' %}" class="text-sm text-gray-600 hover:text-indigo-600">{% trans "Statistics" %}</a>
       </div>
       <div class="flex items-center gap-4">
         {% if user.is_staff %}

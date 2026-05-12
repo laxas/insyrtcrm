@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: insyrtcrm 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-12 00:38-0500\n"
+"POT-Creation-Date: 2026-05-12 06:59-0500\n"
 "PO-Revision-Date: 2026-05-12 00:00+0200\n"
 "Last-Translator: Insyrt Team\n"
 "Language-Team: English\n"
@@ -16,6 +16,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: apps/accounts/models.py:24 apps/accounts/models.py:63
+#: apps/stats/views.py:102
 msgid "User"
 msgstr "User"
 
@@ -35,7 +36,7 @@ msgstr "User preferences"
 msgid "Login"
 msgstr "Login"
 
-#: apps/accounts/models.py:51 templates/base.html:45
+#: apps/accounts/models.py:51 templates/base.html:46
 msgid "Logout"
 msgstr "Logout"
 
@@ -178,7 +179,8 @@ msgstr "Reaction"
 #: apps/activities/models.py:36
 #: apps/imports/templates/admin/imports/preview.html:40
 #: apps/leads/models.py:104 apps/leads/models.py:167 apps/leads/models.py:204
-#: apps/leads/models.py:249 apps/leads/views.py:29
+#: apps/leads/models.py:249 apps/leads/views.py:29 apps/stats/views.py:111
+#: templates/stats/dashboard.html:139
 msgid "Company"
 msgstr "Company"
 
@@ -186,7 +188,7 @@ msgstr "Company"
 msgid "Contact"
 msgstr "Contact"
 
-#: apps/activities/models.py:46
+#: apps/activities/models.py:46 apps/stats/views.py:96
 msgid "Channel"
 msgstr "Channel"
 
@@ -252,12 +254,8 @@ msgstr "Confirm import"
 
 #: apps/imports/admin.py:144
 #, python-format
-msgid ""
-"Import complete: %(created)s created, %(updated)s updated, %(skipped)s "
-"skipped."
-msgstr ""
-"Import complete: %(created)s created, %(updated)s updated, %(skipped)s "
-"skipped."
+msgid "Import complete: %(created)s created, %(updated)s updated, %(skipped)s skipped."
+msgstr "Import complete: %(created)s created, %(updated)s updated, %(skipped)s skipped."
 
 #: apps/imports/admin.py:167
 #: apps/imports/templates/admin/imports/preview.html:4
@@ -424,7 +422,9 @@ msgid "Company, domain, contact…"
 msgstr "Company, domain, contact…"
 
 #: apps/leads/forms.py:15 apps/leads/models.py:60 apps/leads/views.py:31
-#: templates/leads/detail.html:42
+#: apps/stats/views.py:91 apps/stats/views.py:111 apps/stats/views.py:116
+#: templates/leads/detail.html:42 templates/stats/dashboard.html:140
+#: templates/stats/dashboard.html:174
 msgid "Stage"
 msgstr "Stage"
 
@@ -433,7 +433,8 @@ msgid "All stages"
 msgstr "All stages"
 
 #: apps/leads/forms.py:21 apps/leads/models.py:227 apps/leads/views.py:32
-#: templates/leads/detail.html:50
+#: apps/stats/views.py:122 templates/leads/detail.html:50
+#: templates/stats/dashboard.html:292
 msgid "Priority"
 msgstr "Priority"
 
@@ -483,10 +484,8 @@ msgid "Reduce personal data (archive)"
 msgstr "Reduce personal data (archive)"
 
 #: apps/leads/forms.py:70
-msgid ""
-"Deletes contacts, clears qualitative PR-briefing fields and activity notes."
-msgstr ""
-"Deletes contacts, clears qualitative PR-briefing fields and activity notes."
+msgid "Deletes contacts, clears qualitative PR-briefing fields and activity notes."
+msgstr "Deletes contacts, clears qualitative PR-briefing fields and activity notes."
 
 #: apps/leads/forms.py:73 apps/leads/models.py:99
 msgid "Rejection reason"
@@ -580,7 +579,7 @@ msgstr "Created at"
 msgid "Updated at"
 msgstr "Updated at"
 
-#: apps/leads/models.py:105
+#: apps/leads/models.py:105 templates/stats/dashboard.html:212
 msgid "Companies"
 msgstr "Companies"
 
@@ -770,6 +769,23 @@ msgstr "No letter export session found. Please export first."
 msgid "%(n)s letter-sent activities logged."
 msgstr "%(n)s letter-sent activities logged."
 
+#: apps/stats/views.py:91 apps/stats/views.py:96
+msgid "Count"
+msgstr "Count"
+
+#: apps/stats/views.py:111 templates/stats/dashboard.html:141
+msgid "Days in stage"
+msgstr "Days in stage"
+
+#: apps/stats/views.py:116 templates/stats/dashboard.html:175
+#: templates/stats/dashboard.html:232
+msgid "Avg days"
+msgstr "Avg days"
+
+#: apps/stats/views.py:116 templates/stats/dashboard.html:176
+msgid "Transitions"
+msgstr "Transitions"
+
 #: templates/activities/log_email.html:4 templates/activities/log_email.html:12
 msgid "Log email"
 msgstr "Log email"
@@ -800,7 +816,12 @@ msgstr "Log phone call"
 msgid "Leads"
 msgstr "Leads"
 
-#: templates/base.html:27
+#: templates/base.html:24 templates/stats/dashboard.html:4
+#: templates/stats/dashboard.html:15
+msgid "Statistics"
+msgstr "Statistics"
+
+#: templates/base.html:28
 msgid "Admin"
 msgstr "Admin"
 
@@ -901,3 +922,60 @@ msgstr "Password"
 #: templates/registration/login.html:32
 msgid "Log in"
 msgstr "Log in"
+
+#: templates/stats/dashboard.html:32
+msgid "From"
+msgstr "From"
+
+#: templates/stats/dashboard.html:37
+msgid "To"
+msgstr "To"
+
+#: templates/stats/dashboard.html:43
+msgid "Apply"
+msgstr "Apply"
+
+#: templates/stats/dashboard.html:50
+msgid "Aging threshold (days)"
+msgstr "Aging threshold (days)"
+
+#: templates/stats/dashboard.html:64
+msgid "Pipeline funnel"
+msgstr "Pipeline funnel"
+
+#: templates/stats/dashboard.html:74
+msgid "Average days per stage"
+msgstr "Average days per stage"
+
+#: templates/stats/dashboard.html:89
+msgid "Activities by channel"
+msgstr "Activities by channel"
+
+#: templates/stats/dashboard.html:101
+msgid "Activities by user"
+msgstr "Activities by user"
+
+#: templates/stats/dashboard.html:113
+msgid "Priority / Fit distribution"
+msgstr "Priority / Fit distribution"
+
+#: templates/stats/dashboard.html:126
+msgid "Aging report"
+msgstr "Aging report"
+
+#: templates/stats/dashboard.html:128
+#, python-format
+msgid "companies in current stage for more than %(t)s days"
+msgstr "companies in current stage for more than %(t)s days"
+
+#: templates/stats/dashboard.html:163
+msgid "No companies exceed the aging threshold."
+msgstr "No companies exceed the aging threshold."
+
+#: templates/stats/dashboard.html:169
+msgid "Stage dwell time detail"
+msgstr "Stage dwell time detail"
+
+#: templates/stats/dashboard.html:190
+msgid "No stage transition data yet."
+msgstr "No stage transition data yet."

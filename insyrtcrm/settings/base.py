@@ -101,6 +101,13 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "lead-list"
 LOGOUT_REDIRECT_URL = "login"
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": env("REDIS_URL", default="redis://localhost:6379/1"),
+    }
+}
+
 # Django-Q2 broker
 Q_CLUSTER = {
     "name": "insyrtcrm",
