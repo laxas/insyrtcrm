@@ -1,0 +1,49 @@
+{% load i18n %}
+{% if activities %}
+<div class="divide-y divide-gray-100">
+  {% for act in activities %}
+  <div class="py-3 text-sm">
+    <div class="flex items-start justify-between gap-3 flex-wrap">
+      <div class="flex items-center gap-2">
+        <span class="text-base">
+          {% if act.channel == "PHONE" %}📞
+          {% elif act.channel == "EMAIL" %}✉
+          {% elif act.channel == "LINKEDIN" %}🔗
+          {% elif act.channel == "LETTER" %}📄
+          {% else %}📝{% endif %}
+        </span>
+        <span class="font-medium">{{ act.get_channel_display }}</span>
+        {% if act.direction == "IN" %}
+        <span class="text-xs bg-blue-50 text-blue-700 rounded-full px-2 py-0.5">↙ {% trans "In" %}</span>
+        {% else %}
+        <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2 py-0.5">↗ {% trans "Out" %}</span>
+        {% endif %}
+        {% if act.outcome %}
+        <span class="text-xs bg-indigo-50 text-indigo-700 rounded-full px-2 py-0.5">{{ act.get_outcome_display }}</span>
+        {% endif %}
+        {% if act.subject %}
+        <span class="text-gray-500 truncate max-w-xs" title="{{ act.subject }}">{{ act.subject|truncatechars:60 }}</span>
+        {% endif %}
+      </div>
+      <div class="text-xs text-gray-400 shrink-0">
+        {{ act.occurred_at|date:"d.m.Y H:i" }}
+        {% if act.performed_by %}
+        · {{ act.performed_by.get_full_name|default:act.performed_by.username }}
+        {% endif %}
+        {% if act.contact %}
+        · <span class="text-gray-500">{{ act.contact.full_name|default:act.contact.first_name }}</span>
+        {% endif %}
+        {% if act.duration_seconds %}
+        · {{ act.duration_seconds|floatformat:"0" }}s
+        {% endif %}
+      </div>
+    </div>
+    {% if act.note %}
+    <p class="mt-1 text-gray-600 whitespace-pre-wrap">{{ act.note }}</p>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-gray-400 text-sm">{% trans "No activities yet." %}</p>
+{% endif %}

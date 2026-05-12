@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Leads" %} – InsyrtCRM{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-semibold">{% trans "Leads" %} <span class="text-gray-400 text-base font-normal">({{ paginator.count }})</span></h1>
+  <div class="flex gap-2">
+    <a href="{% url 'csv-export' %}?{{ get_params }}"
+       class="text-sm border border-gray-300 rounded px-3 py-1.5 hover:bg-gray-100">
+      CSV
+    </a>
+  </div>
+</div>
+
+{# ---- Filter panel ---- #}
+<form method="get" class="bg-white border border-gray-200 rounded-lg p-4 mb-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+  <div>
+    <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.q.label }}</label>
+    {{ filter_form.q }}
+  </div>
+  <div>
+    <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.stage.label }}</label>
+    {{ filter_form.stage }}
+  </div>
+  <div>
+    <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.priority.label }}</label>
+    {{ filter_form.priority }}
+  </div>
+  <div>
+    <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.fit.label }}</label>
+    {{ filter_form.fit }}
+  </div>
+  <div>
+    <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.industry.label }}</label>
+    {{ filter_form.industry }}
+  </div>
+  <div>
+    <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.owner.label }}</label>
+    {{ filter_form.owner }}
+  </div>
+  <div>
+    <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.channel.label }}</label>
+    {{ filter_form.channel }}
+  </div>
+  <div>
+    <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.days_since_activity.label }}</label>
+    {{ filter_form.days_since_activity }}
+  </div>
+  <div class="col-span-2 md:col-span-4 flex gap-2">
+    <button type="submit" class="bg-indigo-600 text-white rounded px-4 py-1.5 text-sm hover:bg-indigo-700">{% trans "Filter" %}</button>
+    <a href="{% url 'lead-list' %}" class="border border-gray-300 rounded px-4 py-1.5 text-sm hover:bg-gray-100">{% trans "Reset" %}</a>
+  </div>
+</form>
+
+{# ---- Bulk actions + column picker ---- #}
+<form method="post" id="bulk-form">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+  <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
+    <div class="flex gap-2">
+      <button type="submit" form="bulk-form" formaction="{% url 'letter-export' %}"
+        class="text-sm border border-gray-300 rounded px-3 py-1.5 hover:bg-gray-100">
+        📄 {% trans "Export for letter" %}
+      </button>
+      <a href="{% url 'letter-log' %}"
+         onclick="if(!confirm('{% trans "Log letter sent for last export?" %}')) return false;"
+         class="text-sm border border-gray-300 rounded px-3 py-1.5 hover:bg-gray-100">
+        ✉ {% trans "Mark letter sent" %}
+      </a>
+    </div>
+
+    {# Column picker #}
+    <details class="relative">
+      <summary class="cursor-pointer text-sm border border-gray-300 rounded px-3 py-1.5 hover:bg-gray-100 list-none">
+        ☰ {% trans "Columns" %}
+      </summary>
+      <div class="absolute right-0 z-10 mt-1 bg-white border border-gray-200 rounded shadow-lg p-3 min-w-48">
+        <form method="post" action="{% url 'save-columns' %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          {% for col in all_columns %}
+          <label class="flex items-center gap-2 text-sm py-0.5 cursor-pointer">
+            <input type="checkbox" name="columns" value="{{ col.key }}"
+              {% if col.key in active_columns %}checked{% endif %}>
+            {{ col.label }}
+          </label>
+          {% endfor %}
+          <button type="submit" class="mt-2 w-full text-xs bg-indigo-600 text-white rounded px-2 py-1 hover:bg-indigo-700">
+            {% trans "Save" %}
+          </button>
+        </form>
+      </div>
+    </details>
+  </div>
+
+  {# ---- Table ---- #}
+  <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-gray-200 bg-gray-50 text-left">
+          <th class="px-3 py-2 w-8">
+            <input type="checkbox" id="select-all" class="cursor-pointer">
+          </th>
+          {% for col_key in active_columns %}
+          {% for col in all_columns %}{% if col.key == col_key %}
+          <th class="px-3 py-2 font-medium text-gray-600 whitespace-nowrap">
+            {% if col.sortable %}
+              {% with field=col_key %}
+              {% if sort == field %}
+              <a href="?{{ get_params }}&sort=-{{ field }}" class="flex items-center gap-1 hover:text-indigo-600">{{ col.label }} ▲</a>
+              {% elif sort == "-"|add:field %}
+              <a href="?{{ get_params }}&sort={{ field }}" class="flex items-center gap-1 hover:text-indigo-600">{{ col.label }} ▼</a>
+              {% else %}
+              <a href="?{{ get_params }}&sort={{ field }}" class="hover:text-indigo-600">{{ col.label }}</a>
+              {% endif %}
+              {% endwith %}
+            {% else %}
+              {{ col.label }}
+            {% endif %}
+          </th>
+          {% endif %}{% endfor %}
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        {% for company in companies %}
+        <tr class="hover:bg-gray-50">
+          <td class="px-3 py-2">
+            <input type="checkbox" name="company_ids" value="{{ company.pk }}" class="row-check cursor-pointer">
+          </td>
+          {% for col_key in active_columns %}
+          <td class="px-3 py-2">
+            {% if col_key == "name" %}
+              <a href="{% url 'lead-detail' company.pk %}" class="font-medium text-indigo-700 hover:underline">{{ company.name }}</a>
+            {% elif col_key == "domain" %}
+              {% if company.domain %}<a href="https://{{ company.domain }}" target="_blank" rel="noopener" class="text-gray-500 hover:text-indigo-600">{{ company.domain }}</a>{% endif %}
+            {% elif col_key == "stage" %}
+              {% if company.current_stage %}<span class="rounded-full bg-indigo-50 text-indigo-700 text-xs px-2 py-0.5">{{ company.current_stage.name_de }}</span>{% endif %}
+            {% elif col_key == "priority" %}
+              {% with br=company.prbriefing %}{% if br.priority %}<span class="font-semibold">{{ br.priority }}</span>{% endif %}{% endwith %}
+            {% elif col_key == "fit" %}
+              {% with br=company.prbriefing %}{% if br.fit_score %}{{ br.fit_score }}/5{% endif %}{% endwith %}
+            {% elif col_key == "industry" %}
+              <span class="text-gray-600 truncate max-w-xs block" title="{{ company.industry }}">{{ company.industry|truncatechars:40 }}</span>
+            {% elif col_key == "owner" %}
+              {% if company.owner %}{{ company.owner.get_full_name|default:company.owner.username }}{% endif %}
+            {% elif col_key == "size" %}
+              {{ company.size|truncatechars:30 }}
+            {% elif col_key == "location" %}
+              {{ company.city|default:company.location|truncatechars:30 }}
+            {% elif col_key == "last_activity" %}
+              {% if company.last_activity_at %}
+              <span class="text-gray-500 text-xs">{{ company.last_activity_at|date:"d.m.Y" }}</span>
+              {% endif %}
+            {% endif %}
+          </td>
+          {% endfor %}
+        </tr>
+        {% empty %}
+        <tr><td colspan="20" class="px-4 py-8 text-center text-gray-400">{% trans "No leads found." %}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</form>
+
+{# ---- Pagination ---- #}
+{% if is_paginated %}
+<div class="flex justify-center gap-1 mt-4">
+  {% if page_obj.has_previous %}
+  <a href="?{{ get_params }}&page={{ page_obj.previous_page_number }}"
+     class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">‹</a>
+  {% endif %}
+  <span class="px-3 py-1 text-sm text-gray-600">
+    {{ page_obj.number }} / {{ paginator.num_pages }}
+  </span>
+  {% if page_obj.has_next %}
+  <a href="?{{ get_params }}&page={{ page_obj.next_page_number }}"
+     class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">›</a>
+  {% endif %}
+</div>
+{% endif %}
+
+<script>
+document.getElementById('select-all').addEventListener('change', function() {
+  document.querySelectorAll('.row-check').forEach(cb => cb.checked = this.checked);
+});
+</script>
+
+{# Apply Tailwind classes to filter form fields #}
+<style>
+  input[type=text], input[type=number], select {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    background: white;
+  }
+  input[type=text]:focus, input[type=number]:focus, select:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99,102,241,0.2);
+  }
+</style>
+{% endblock %}

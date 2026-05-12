@@ -25,6 +25,8 @@ class Activity(models.Model):
         SENT = "sent", _("Sent / Versandt")
         CONNECTED = "connected", _("Connected / Verbunden")
         MESSAGE_SENT = "message_sent", _("Message sent / Nachricht gesendet")
+        COMMENT = "comment", _("Comment / Kommentar")
+        REACTION = "reaction", _("Reaction / Reaktion")
         OTHER = "other", _("Other / Sonstige")
 
     company = models.ForeignKey(
@@ -52,6 +54,7 @@ class Activity(models.Model):
         related_name="activities",
         verbose_name=_("Performed by"),
     )
+    subject = models.CharField(_("Subject"), max_length=255, blank=True)
     duration_seconds = models.PositiveIntegerField(_("Duration (seconds)"), null=True, blank=True)
     note = models.TextField(_("Note"), blank=True)
 

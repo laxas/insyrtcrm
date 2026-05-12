@@ -1,0 +1,72 @@
+{% load i18n %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}InsyrtCRM{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.3" integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq" crossorigin="anonymous"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    .htmx-indicator { display: none; }
+    .htmx-request .htmx-indicator { display: inline; }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+
+  {% if user.is_authenticated %}
+  <nav class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-screen-xl mx-auto px-4 flex items-center justify-between h-14">
+      <div class="flex items-center gap-6">
+        <a href="{% url 'lead-list' %}" class="font-bold text-indigo-600 text-lg tracking-tight">InsyrtCRM</a>
+        <a href="{% url 'lead-list' %}" class="text-sm text-gray-600 hover:text-indigo-600">{% trans "Leads" %}</a>
+      </div>
+      <div class="flex items-center gap-4">
+        {% if user.is_staff %}
+        <a href="{% url 'admin:index' %}" class="text-sm text-gray-500 hover:text-gray-800">{% trans "Admin" %}</a>
+        {% endif %}
+        {# Language switcher #}
+        <form action="{% url 'set_language' %}" method="post" class="flex items-center gap-1">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <select name="language" onchange="this.form.submit()"
+            class="text-xs border border-gray-200 rounded px-2 py-1 bg-white text-gray-600">
+            {% get_available_languages as langs %}
+            {% get_current_language as current_lang %}
+            {% for code, name in langs %}
+            <option value="{{ code }}" {% if code == current_lang %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+          </select>
+        </form>
+        <span class="text-sm text-gray-500">{{ user.get_full_name|default:user.username }}</span>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="text-sm text-gray-500 hover:text-red-600">{% trans "Logout" %}</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+  {% endif %}
+
+  {# Flash messages #}
+  {% if messages %}
+  <div class="max-w-screen-xl mx-auto px-4 mt-3 space-y-2">
+    {% for message in messages %}
+    <div class="rounded px-4 py-2 text-sm
+      {% if message.tags == 'success' %}bg-green-100 text-green-800
+      {% elif message.tags == 'error' %}bg-red-100 text-red-800
+      {% elif message.tags == 'warning' %}bg-yellow-100 text-yellow-800
+      {% else %}bg-blue-100 text-blue-800{% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <main class="flex-1 max-w-screen-xl mx-auto w-full px-4 py-6">
+    {% block content %}{% endblock %}
+  </main>
+
+</body>
+</html>

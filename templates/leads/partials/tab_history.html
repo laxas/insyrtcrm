@@ -1,0 +1,27 @@
+{% load i18n %}
+{% if transitions %}
+<div class="divide-y divide-gray-100">
+  {% for tr in transitions %}
+  <div class="py-3 text-sm flex flex-wrap gap-3 items-start">
+    <div class="shrink-0 text-gray-400 text-xs w-28">{{ tr.transitioned_at|date:"d.m.Y H:i" }}</div>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-2 flex-wrap">
+        {% if tr.from_stage %}
+        <span class="rounded-full bg-gray-100 text-gray-600 text-xs px-2 py-0.5">{{ tr.from_stage.name_de }}</span>
+        <span class="text-gray-400">→</span>
+        {% endif %}
+        <span class="rounded-full bg-indigo-50 text-indigo-700 text-xs px-2 py-0.5">{{ tr.to_stage.name_de }}</span>
+        {% if tr.by_user %}
+        <span class="text-gray-500 text-xs">{{ tr.by_user.get_full_name|default:tr.by_user.username }}</span>
+        {% endif %}
+      </div>
+      {% if tr.comment %}
+      <p class="mt-1 text-gray-600">{{ tr.comment }}</p>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-gray-400 text-sm">{% trans "No stage transitions yet." %}</p>
+{% endif %}

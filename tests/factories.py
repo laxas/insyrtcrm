@@ -13,8 +13,14 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     username = factory.Sequence(lambda n: f"user{n}")
     email = factory.LazyAttribute(lambda obj: f"{obj.username}@example.com")
-    password = factory.PostGenerationMethodCall("set_password", "testpassword123!")
     is_active = True
+
+    @factory.post_generation
+    def password(obj, create, extracted, **kwargs):  # noqa: N805
+        if not create:
+            return
+        obj.set_password(extracted or "testpassword123!")
+        obj.save(update_fields=["password"])
 
 
 class StageFactory(factory.django.DjangoModelFactory):

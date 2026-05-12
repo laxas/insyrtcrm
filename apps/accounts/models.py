@@ -4,6 +4,42 @@ from django.utils.translation import gettext_lazy as _
 
 # TODO(phase-1-mfa): add django-otp TOTP MFA once Django 6 support is confirmed.
 
+DEFAULT_LIST_COLUMNS = [
+    "name",
+    "domain",
+    "stage",
+    "priority",
+    "fit",
+    "industry",
+    "owner",
+    "last_activity",
+]
+
+
+class UserPreferences(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="preferences",
+        verbose_name=_("User"),
+    )
+    list_columns = models.JSONField(
+        _("List columns"),
+        default=list,
+        blank=True,
+        help_text=_("Ordered list of column keys shown in the lead list."),
+    )
+
+    class Meta:
+        verbose_name = _("User preferences")
+        verbose_name_plural = _("User preferences")
+
+    def __str__(self) -> str:
+        return f"Preferences — {self.user}"
+
+    def get_list_columns(self) -> list[str]:
+        return self.list_columns or DEFAULT_LIST_COLUMNS
+
 
 class AuditEntry(models.Model):
     """FR-US-05: lightweight audit log for security-relevant actions.

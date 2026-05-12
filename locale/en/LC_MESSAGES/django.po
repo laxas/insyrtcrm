@@ -1,0 +1,903 @@
+# InsyrtCRM — English translations
+# Copyright (C) 2026 Insyrt GmbH
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: insyrtcrm 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-12 00:38-0500\n"
+"PO-Revision-Date: 2026-05-12 00:00+0200\n"
+"Last-Translator: Insyrt Team\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/accounts/models.py:24 apps/accounts/models.py:63
+msgid "User"
+msgstr "User"
+
+#: apps/accounts/models.py:27
+msgid "List columns"
+msgstr "List columns"
+
+#: apps/accounts/models.py:30
+msgid "Ordered list of column keys shown in the lead list."
+msgstr "Ordered list of column keys shown in the lead list."
+
+#: apps/accounts/models.py:34 apps/accounts/models.py:35
+msgid "User preferences"
+msgstr "User preferences"
+
+#: apps/accounts/models.py:50 templates/registration/login.html:6
+msgid "Login"
+msgstr "Login"
+
+#: apps/accounts/models.py:51 templates/base.html:45
+msgid "Logout"
+msgstr "Logout"
+
+#: apps/accounts/models.py:52
+msgid "Role change"
+msgstr "Role change"
+
+#: apps/accounts/models.py:53
+msgid "Data reduction"
+msgstr "Data reduction"
+
+#: apps/accounts/models.py:54
+msgid "Import"
+msgstr "Import"
+
+#: apps/accounts/models.py:55 apps/leads/models.py:276
+msgid "Stage transition"
+msgstr "Stage transition"
+
+#: apps/accounts/models.py:57
+msgid "Action"
+msgstr "Action"
+
+#: apps/accounts/models.py:65
+msgid "Timestamp"
+msgstr "Timestamp"
+
+#: apps/accounts/models.py:66
+msgid "Object"
+msgstr "Object"
+
+#: apps/accounts/models.py:67
+msgid "Message"
+msgstr "Message"
+
+#: apps/accounts/models.py:68
+msgid "IP address"
+msgstr "IP address"
+
+#: apps/accounts/models.py:71
+msgid "Audit entry"
+msgstr "Audit entry"
+
+#: apps/accounts/models.py:72
+msgid "Audit entries"
+msgstr "Audit entries"
+
+#: apps/activities/forms.py:12
+msgid "Date / time"
+msgstr "Date / time"
+
+#: apps/activities/forms.py:25
+msgid "— no contact —"
+msgstr "— no contact —"
+
+#: apps/activities/forms.py:33
+msgid "Duration (minutes)"
+msgstr "Duration (minutes)"
+
+#: apps/activities/forms.py:81
+msgid "Activity type"
+msgstr "Activity type"
+
+#: apps/activities/forms.py:97 apps/activities/models.py:57
+msgid "Subject"
+msgstr "Subject"
+
+#: apps/activities/models.py:8
+msgid "Letter / Brief"
+msgstr "Letter"
+
+#: apps/activities/models.py:9
+msgid "Phone / Telefon"
+msgstr "Phone"
+
+#: apps/activities/models.py:10
+msgid "LinkedIn"
+msgstr "LinkedIn"
+
+#: apps/activities/models.py:11
+msgid "Email / E-Mail"
+msgstr "Email"
+
+#: apps/activities/models.py:12 apps/activities/models.py:30
+msgid "Other / Sonstige"
+msgstr "Other"
+
+#: apps/activities/models.py:15
+msgid "Outbound"
+msgstr "Outbound"
+
+#: apps/activities/models.py:16
+msgid "Inbound"
+msgstr "Inbound"
+
+#: apps/activities/models.py:19
+msgid "Not reached / Nicht erreicht"
+msgstr "Not reached"
+
+#: apps/activities/models.py:20
+msgid "Callback agreed / Rückruf vereinbart"
+msgstr "Callback agreed"
+
+#: apps/activities/models.py:21
+msgid "Voicemail / Mailbox"
+msgstr "Voicemail"
+
+#: apps/activities/models.py:22
+msgid "Interested / Interesse"
+msgstr "Interested"
+
+#: apps/activities/models.py:23
+msgid "Not interested / Kein Interesse"
+msgstr "Not interested"
+
+#: apps/activities/models.py:24
+msgid "Meeting scheduled / Termin vereinbart"
+msgstr "Meeting scheduled"
+
+#: apps/activities/models.py:25
+msgid "Sent / Versandt"
+msgstr "Sent"
+
+#: apps/activities/models.py:26
+msgid "Connected / Verbunden"
+msgstr "Connected"
+
+#: apps/activities/models.py:27
+msgid "Message sent / Nachricht gesendet"
+msgstr "Message sent"
+
+#: apps/activities/models.py:28
+msgid "Comment / Kommentar"
+msgstr "Comment"
+
+#: apps/activities/models.py:29
+msgid "Reaction / Reaktion"
+msgstr "Reaction"
+
+#: apps/activities/models.py:36
+#: apps/imports/templates/admin/imports/preview.html:40
+#: apps/leads/models.py:104 apps/leads/models.py:167 apps/leads/models.py:204
+#: apps/leads/models.py:249 apps/leads/views.py:29
+msgid "Company"
+msgstr "Company"
+
+#: apps/activities/models.py:44 apps/leads/models.py:179
+msgid "Contact"
+msgstr "Contact"
+
+#: apps/activities/models.py:46
+msgid "Channel"
+msgstr "Channel"
+
+#: apps/activities/models.py:47
+msgid "Direction"
+msgstr "Direction"
+
+#: apps/activities/models.py:48
+msgid "Outcome"
+msgstr "Outcome"
+
+#: apps/activities/models.py:49
+msgid "Occurred at"
+msgstr "Occurred at"
+
+#: apps/activities/models.py:55 apps/imports/models.py:14
+msgid "Performed by"
+msgstr "Performed by"
+
+#: apps/activities/models.py:58
+msgid "Duration (seconds)"
+msgstr "Duration (seconds)"
+
+#: apps/activities/models.py:59
+msgid "Note"
+msgstr "Note"
+
+#: apps/activities/models.py:62
+msgid "Activity"
+msgstr "Activity"
+
+#: apps/activities/models.py:63 templates/leads/detail.html:83
+msgid "Activities"
+msgstr "Activities"
+
+#: apps/activities/views.py:35
+msgid "Unknown channel."
+msgstr "Unknown channel."
+
+#: apps/activities/views.py:48
+msgid "Activity logged."
+msgstr "Activity logged."
+
+#: apps/imports/admin.py:96 apps/imports/templates/admin/imports/preview.html:9
+#: apps/imports/templates/admin/imports/upload.html:4
+#: apps/imports/templates/admin/imports/upload.html:9
+#: apps/imports/templates/admin/imports/upload.html:14
+msgid "Import Leads"
+msgstr "Import Leads"
+
+#: apps/imports/admin.py:114
+msgid "Import session expired or invalid. Please upload the file again."
+msgstr "Import session expired or invalid. Please upload the file again."
+
+#: apps/imports/admin.py:123
+msgid "Uploaded file no longer available. Please upload again."
+msgstr "Uploaded file no longer available. Please upload again."
+
+#: apps/imports/admin.py:128
+#: apps/imports/templates/admin/imports/preview.html:63
+msgid "Confirm import"
+msgstr "Confirm import"
+
+#: apps/imports/admin.py:144
+#, python-format
+msgid ""
+"Import complete: %(created)s created, %(updated)s updated, %(skipped)s "
+"skipped."
+msgstr ""
+"Import complete: %(created)s created, %(updated)s updated, %(skipped)s "
+"skipped."
+
+#: apps/imports/admin.py:167
+#: apps/imports/templates/admin/imports/preview.html:4
+#: apps/imports/templates/admin/imports/preview.html:15
+msgid "Import Preview"
+msgstr "Import Preview"
+
+#: apps/imports/forms.py:7
+msgid "File (xlsx or csv)"
+msgstr "File (xlsx or csv)"
+
+#: apps/imports/forms.py:8
+msgid "Upload the Google Sheet export in xlsx or csv format."
+msgstr "Upload the Google Sheet export in xlsx or csv format."
+
+#: apps/imports/forms.py:11
+msgid "On duplicate"
+msgstr "On duplicate"
+
+#: apps/imports/forms.py:13
+msgid "Skip — keep existing record unchanged"
+msgstr "Skip — keep existing record unchanged"
+
+#: apps/imports/forms.py:14
+msgid "Update — overwrite existing record with new data"
+msgstr "Update — overwrite existing record with new data"
+
+#: apps/imports/forms.py:15
+msgid "Abort — cancel the entire import if any duplicate is found"
+msgstr "Abort — cancel the entire import if any duplicate is found"
+
+#: apps/imports/models.py:7
+msgid "Source filename"
+msgstr "Source filename"
+
+#: apps/imports/models.py:8
+msgid "Performed at"
+msgstr "Performed at"
+
+#: apps/imports/models.py:16
+msgid "Rows created"
+msgstr "Rows created"
+
+#: apps/imports/models.py:17
+msgid "Rows updated"
+msgstr "Rows updated"
+
+#: apps/imports/models.py:18
+msgid "Rows skipped"
+msgstr "Rows skipped"
+
+#: apps/imports/models.py:19
+#: apps/imports/templates/admin/imports/preview.html:21
+msgid "Errors"
+msgstr "Errors"
+
+#: apps/imports/models.py:20
+msgid "Notes"
+msgstr "Notes"
+
+#: apps/imports/models.py:23
+msgid "Import batch"
+msgstr "Import batch"
+
+#: apps/imports/models.py:24
+msgid "Import batches"
+msgstr "Import batches"
+
+#: apps/imports/templates/admin/imports/preview.html:4
+#: apps/imports/templates/admin/imports/upload.html:4
+msgid "Django site admin"
+msgstr "Django site admin"
+
+#: apps/imports/templates/admin/imports/preview.html:8
+#: apps/imports/templates/admin/imports/upload.html:8
+msgid "Home"
+msgstr "Home"
+
+#: apps/imports/templates/admin/imports/preview.html:10
+msgid "Preview"
+msgstr "Preview"
+
+#: apps/imports/templates/admin/imports/preview.html:18
+#: apps/imports/templates/admin/imports/preview.html:49
+msgid "New"
+msgstr "New"
+
+#: apps/imports/templates/admin/imports/preview.html:19
+#: apps/imports/templates/admin/imports/preview.html:50
+msgid "Update"
+msgstr "Update"
+
+#: apps/imports/templates/admin/imports/preview.html:20
+#: apps/imports/templates/admin/imports/preview.html:51
+msgid "Skip"
+msgstr "Skip"
+
+#: apps/imports/templates/admin/imports/preview.html:26
+#, python-format
+msgid "%(n)s row has errors and will be skipped."
+msgid_plural "%(n)s rows have errors and will be skipped."
+msgstr[0] "%(n)s row has errors and will be skipped."
+msgstr[1] "%(n)s rows have errors and will be skipped."
+
+#: apps/imports/templates/admin/imports/preview.html:38
+msgid "Row"
+msgstr "Row"
+
+#: apps/imports/templates/admin/imports/preview.html:39
+msgid "Status"
+msgstr "Status"
+
+#: apps/imports/templates/admin/imports/preview.html:41
+msgid "Issues"
+msgstr "Issues"
+
+#: apps/imports/templates/admin/imports/preview.html:52
+msgid "Error"
+msgstr "Error"
+
+#: apps/imports/templates/admin/imports/preview.html:64
+#: templates/activities/log_email.html:31
+#: templates/activities/log_letter.html:31
+#: templates/activities/log_linkedin.html:31
+#: templates/activities/log_phone.html:31
+#: templates/leads/transition_form.html:58
+msgid "Cancel"
+msgstr "Cancel"
+
+#: apps/imports/templates/admin/imports/upload.html:35
+msgid "Preview import"
+msgstr "Preview import"
+
+#: apps/leads/admin.py:27
+msgid "Scores & Priority"
+msgstr "Scores & Priority"
+
+#: apps/leads/admin.py:31
+msgid "Qualitative fields"
+msgstr "Qualitative fields"
+
+#: apps/leads/admin.py:50
+msgid "Dates & Status"
+msgstr "Dates & Status"
+
+#: apps/leads/admin.py:93
+msgid "Details"
+msgstr "Details"
+
+#: apps/leads/admin.py:96
+msgid "Archive"
+msgstr "Archive"
+
+#: apps/leads/admin.py:97
+msgid "Timestamps"
+msgstr "Timestamps"
+
+#: apps/leads/forms.py:10
+msgid "Search"
+msgstr "Search"
+
+#: apps/leads/forms.py:12
+msgid "Company, domain, contact…"
+msgstr "Company, domain, contact…"
+
+#: apps/leads/forms.py:15 apps/leads/models.py:60 apps/leads/views.py:31
+#: templates/leads/detail.html:42
+msgid "Stage"
+msgstr "Stage"
+
+#: apps/leads/forms.py:18
+msgid "All stages"
+msgstr "All stages"
+
+#: apps/leads/forms.py:21 apps/leads/models.py:227 apps/leads/views.py:32
+#: templates/leads/detail.html:50
+msgid "Priority"
+msgstr "Priority"
+
+#: apps/leads/forms.py:22 apps/leads/forms.py:27 apps/leads/forms.py:35
+msgid "All"
+msgstr "All"
+
+#: apps/leads/forms.py:26 templates/leads/partials/tab_briefing.html:72
+msgid "Fit score"
+msgstr "Fit score"
+
+#: apps/leads/forms.py:30 apps/leads/views.py:34 templates/leads/detail.html:62
+msgid "Industry"
+msgstr "Industry"
+
+#: apps/leads/forms.py:32 apps/leads/models.py:89 apps/leads/views.py:35
+#: templates/leads/detail.html:58
+msgid "Owner"
+msgstr "Owner"
+
+#: apps/leads/forms.py:38
+msgid "Last activity channel"
+msgstr "Last activity channel"
+
+#: apps/leads/forms.py:39 apps/leads/forms.py:53
+msgid "Any channel"
+msgstr "Any channel"
+
+#: apps/leads/forms.py:43
+msgid "No contact for (days)"
+msgstr "No contact for (days)"
+
+#: apps/leads/forms.py:46
+msgid "e.g. 30"
+msgstr "e.g. 30"
+
+#: apps/leads/forms.py:58
+msgid "New stage"
+msgstr "New stage"
+
+#: apps/leads/forms.py:63 apps/leads/models.py:273
+msgid "Comment"
+msgstr "Comment"
+
+#: apps/leads/forms.py:68
+msgid "Reduce personal data (archive)"
+msgstr "Reduce personal data (archive)"
+
+#: apps/leads/forms.py:70
+msgid ""
+"Deletes contacts, clears qualitative PR-briefing fields and activity notes."
+msgstr ""
+"Deletes contacts, clears qualitative PR-briefing fields and activity notes."
+
+#: apps/leads/forms.py:73 apps/leads/models.py:99
+msgid "Rejection reason"
+msgstr "Rejection reason"
+
+#: apps/leads/models.py:53
+msgid "Name (DE)"
+msgstr "Name (DE)"
+
+#: apps/leads/models.py:54
+msgid "Name (EN)"
+msgstr "Name (EN)"
+
+#: apps/leads/models.py:55
+msgid "Order"
+msgstr "Order"
+
+#: apps/leads/models.py:56
+msgid "Is final state"
+msgstr "Is final state"
+
+#: apps/leads/models.py:57
+msgid "Is archive stage"
+msgstr "Is archive stage"
+
+#: apps/leads/models.py:61
+msgid "Stages"
+msgstr "Stages"
+
+#: apps/leads/models.py:69
+msgid "Company name"
+msgstr "Company name"
+
+#: apps/leads/models.py:70 apps/leads/views.py:30
+msgid "Domain"
+msgstr "Domain"
+
+#: apps/leads/models.py:71 apps/leads/views.py:37
+msgid "Location"
+msgstr "Location"
+
+#: apps/leads/models.py:72
+msgid "Industry / Tech focus"
+msgstr "Industry / Tech focus"
+
+#: apps/leads/models.py:73
+msgid "Product / Technology"
+msgstr "Product / Technology"
+
+#: apps/leads/models.py:74
+msgid "Company size"
+msgstr "Company size"
+
+#: apps/leads/models.py:75
+msgid "Investors / Funding"
+msgstr "Investors / Funding"
+
+#: apps/leads/models.py:76
+msgid "B2B Technology"
+msgstr "B2B Technology"
+
+#: apps/leads/models.py:77
+msgid "Source"
+msgstr "Source"
+
+#: apps/leads/models.py:79
+msgid "Street"
+msgstr "Street"
+
+#: apps/leads/models.py:80
+msgid "Postcode"
+msgstr "Postcode"
+
+#: apps/leads/models.py:81
+msgid "City"
+msgstr "City"
+
+#: apps/leads/models.py:82
+msgid "Country"
+msgstr "Country"
+
+#: apps/leads/models.py:97
+msgid "Current stage"
+msgstr "Current stage"
+
+#: apps/leads/models.py:100
+msgid "Created at"
+msgstr "Created at"
+
+#: apps/leads/models.py:101
+msgid "Updated at"
+msgstr "Updated at"
+
+#: apps/leads/models.py:105
+msgid "Companies"
+msgstr "Companies"
+
+#: apps/leads/models.py:169
+msgid "Salutation"
+msgstr "Salutation"
+
+#: apps/leads/models.py:170
+msgid "First name"
+msgstr "First name"
+
+#: apps/leads/models.py:171
+msgid "Last name"
+msgstr "Last name"
+
+#: apps/leads/models.py:172
+msgid "Full name"
+msgstr "Full name"
+
+#: apps/leads/models.py:173
+msgid "Position"
+msgstr "Position"
+
+#: apps/leads/models.py:174
+msgid "Email"
+msgstr "Email"
+
+#: apps/leads/models.py:175
+msgid "Phone"
+msgstr "Phone"
+
+#: apps/leads/models.py:176
+msgid "LinkedIn URL"
+msgstr "LinkedIn URL"
+
+#: apps/leads/models.py:180 templates/leads/detail.html:80
+msgid "Contacts"
+msgstr "Contacts"
+
+#: apps/leads/models.py:184
+msgid "(unnamed)"
+msgstr "(unnamed)"
+
+#: apps/leads/models.py:189
+msgid "High / Hoch"
+msgstr "High"
+
+#: apps/leads/models.py:190
+msgid "Medium / Mittel"
+msgstr "Medium"
+
+#: apps/leads/models.py:191
+msgid "Low / Gering"
+msgstr "Low"
+
+#: apps/leads/models.py:206 templates/leads/partials/tab_briefing.html:7
+msgid "Reality check"
+msgstr "Reality check"
+
+#: apps/leads/models.py:207 templates/leads/partials/tab_briefing.html:13
+msgid "AI perception"
+msgstr "AI perception"
+
+#: apps/leads/models.py:209 templates/leads/partials/tab_briefing.html:80
+msgid "AI profile clarity"
+msgstr "AI profile clarity"
+
+#: apps/leads/models.py:214 templates/leads/partials/tab_briefing.html:19
+msgid "Media hook"
+msgstr "Media hook"
+
+#: apps/leads/models.py:215 templates/leads/partials/tab_briefing.html:25
+msgid "Value for decision makers"
+msgstr "Value for decision makers"
+
+#: apps/leads/models.py:216 templates/leads/partials/tab_briefing.html:31
+msgid "Communication goal"
+msgstr "Communication goal"
+
+#: apps/leads/models.py:217 templates/leads/partials/tab_briefing.html:37
+msgid "Trigger event"
+msgstr "Trigger event"
+
+#: apps/leads/models.py:218 templates/leads/partials/tab_briefing.html:43
+msgid "Trigger type"
+msgstr "Trigger type"
+
+#: apps/leads/models.py:219 templates/leads/partials/tab_briefing.html:55
+msgid "Communication gap"
+msgstr "Communication gap"
+
+#: apps/leads/models.py:220 templates/leads/partials/tab_briefing.html:49
+msgid "Innovative / Serious"
+msgstr "Innovative / Serious"
+
+#: apps/leads/models.py:222
+msgid "PR story potential (1-5)"
+msgstr "PR story potential (1-5)"
+
+#: apps/leads/models.py:225
+msgid "Fit score (1-5)"
+msgstr "Fit score (1-5)"
+
+#: apps/leads/models.py:228 templates/leads/partials/tab_briefing.html:61
+msgid "Press / News"
+msgstr "Press / News"
+
+#: apps/leads/models.py:229 templates/leads/partials/tab_briefing.html:67
+msgid "Next step"
+msgstr "Next step"
+
+#: apps/leads/models.py:230 templates/leads/partials/tab_briefing.html:84
+msgid "Last contact"
+msgstr "Last contact"
+
+#: apps/leads/models.py:231
+msgid "Research date"
+msgstr "Research date"
+
+#: apps/leads/models.py:232
+msgid "Last update"
+msgstr "Last update"
+
+#: apps/leads/models.py:233
+msgid "Currency check (Aktualität)"
+msgstr "Currency check"
+
+#: apps/leads/models.py:234 templates/leads/partials/tab_briefing.html:88
+msgid "Update needed"
+msgstr "Update needed"
+
+#: apps/leads/models.py:237 templates/leads/detail.html:77
+msgid "PR Briefing"
+msgstr "PR Briefing"
+
+#: apps/leads/models.py:238
+msgid "PR Briefings"
+msgstr "PR Briefings"
+
+#: apps/leads/models.py:257
+msgid "From stage"
+msgstr "From stage"
+
+#: apps/leads/models.py:263
+msgid "To stage"
+msgstr "To stage"
+
+#: apps/leads/models.py:265
+msgid "Transitioned at"
+msgstr "Transitioned at"
+
+#: apps/leads/models.py:271
+msgid "By user"
+msgstr "By user"
+
+#: apps/leads/models.py:277
+msgid "Stage transitions"
+msgstr "Stage transitions"
+
+#: apps/leads/views.py:33 templates/leads/detail.html:54
+msgid "Fit"
+msgstr "Fit"
+
+#: apps/leads/views.py:36
+msgid "Size"
+msgstr "Size"
+
+#: apps/leads/views.py:38
+msgid "Last activity"
+msgstr "Last activity"
+
+#: apps/leads/views.py:238
+#, python-format
+msgid "Stage updated to %(stage)s."
+msgstr "Stage updated to %(stage)s."
+
+#: apps/leads/views.py:328
+msgid "No leads selected."
+msgstr "No leads selected."
+
+#: apps/leads/views.py:378
+msgid "No letter export session found. Please export first."
+msgstr "No letter export session found. Please export first."
+
+#: apps/leads/views.py:399
+#, python-format
+msgid "%(n)s letter-sent activities logged."
+msgstr "%(n)s letter-sent activities logged."
+
+#: templates/activities/log_email.html:4 templates/activities/log_email.html:12
+msgid "Log email"
+msgstr "Log email"
+
+#: templates/activities/log_email.html:28
+#: templates/activities/log_letter.html:28
+#: templates/activities/log_linkedin.html:28
+#: templates/activities/log_phone.html:28 templates/leads/list.html:92
+msgid "Save"
+msgstr "Save"
+
+#: templates/activities/log_letter.html:4
+#: templates/activities/log_letter.html:12
+msgid "Log letter"
+msgstr "Log letter"
+
+#: templates/activities/log_linkedin.html:4
+#: templates/activities/log_linkedin.html:12
+msgid "Log LinkedIn activity"
+msgstr "Log LinkedIn activity"
+
+#: templates/activities/log_phone.html:4 templates/activities/log_phone.html:12
+msgid "Log phone call"
+msgstr "Log phone call"
+
+#: templates/base.html:23 templates/leads/list.html:4
+#: templates/leads/list.html:8
+msgid "Leads"
+msgstr "Leads"
+
+#: templates/base.html:27
+msgid "Admin"
+msgstr "Admin"
+
+#: templates/leads/detail.html:8
+msgid "Back to leads"
+msgstr "Back to leads"
+
+#: templates/leads/detail.html:35 templates/leads/transition_form.html:4
+#: templates/leads/transition_form.html:12
+#: templates/leads/transition_form.html:55
+msgid "Transition stage"
+msgstr "Transition stage"
+
+#: templates/leads/detail.html:86
+msgid "History"
+msgstr "History"
+
+#: templates/leads/detail.html:91
+msgid "Loading…"
+msgstr "Loading…"
+
+#: templates/leads/list.html:52
+msgid "Filter"
+msgstr "Filter"
+
+#: templates/leads/list.html:53
+msgid "Reset"
+msgstr "Reset"
+
+#: templates/leads/list.html:66
+msgid "Export for letter"
+msgstr "Export for letter"
+
+#: templates/leads/list.html:69
+msgid "Log letter sent for last export?"
+msgstr "Log letter sent for last export?"
+
+#: templates/leads/list.html:71
+msgid "Mark letter sent"
+msgstr "Mark letter sent"
+
+#: templates/leads/list.html:78
+msgid "Columns"
+msgstr "Columns"
+
+#: templates/leads/list.html:163
+msgid "No leads found."
+msgstr "No leads found."
+
+#: templates/leads/partials/tab_activities.html:17
+msgid "In"
+msgstr "In"
+
+#: templates/leads/partials/tab_activities.html:19
+msgid "Out"
+msgstr "Out"
+
+#: templates/leads/partials/tab_activities.html:48
+msgid "No activities yet."
+msgstr "No activities yet."
+
+#: templates/leads/partials/tab_briefing.html:76
+msgid "PR story potential"
+msgstr "PR story potential"
+
+#: templates/leads/partials/tab_briefing.html:93
+msgid "Currency check"
+msgstr "Currency check"
+
+#: templates/leads/partials/tab_briefing.html:99
+msgid "No PR briefing yet."
+msgstr "No PR briefing yet."
+
+#: templates/leads/partials/tab_contacts.html:20
+msgid "No contacts."
+msgstr "No contacts."
+
+#: templates/leads/partials/tab_history.html:26
+msgid "No stage transitions yet."
+msgstr "No stage transitions yet."
+
+#: templates/leads/transition_form.html:15
+msgid "Current"
+msgstr "Current"
+
+#: templates/registration/login.html:14
+msgid "Incorrect username or password."
+msgstr "Incorrect username or password."
+
+#: templates/registration/login.html:20
+msgid "Username"
+msgstr "Username"
+
+#: templates/registration/login.html:25
+msgid "Password"
+msgstr "Password"
+
+#: templates/registration/login.html:32
+msgid "Log in"
+msgstr "Log in"

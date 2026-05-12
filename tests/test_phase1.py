@@ -203,7 +203,8 @@ def test_activity_links_to_user_and_company():
 @pytest.mark.django_db
 def test_activity_str():
     activity = ActivityFactory(channel=Activity.Channel.PHONE)
-    assert "Phone" in str(activity)
+    # __str__ uses get_channel_display() which is translated; check company presence instead
+    assert str(activity.company) in str(activity)
 
 
 # ---------------------------------------------------------------------------

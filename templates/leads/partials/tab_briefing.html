@@ -1,0 +1,101 @@
+{% load i18n %}
+{% with br=company.prbriefing %}
+{% if br %}
+<dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+  {% if br.reality_check %}
+  <div class="md:col-span-2">
+    <dt class="text-xs font-medium text-gray-500 mb-1">⚠ {% trans "Reality check" %}</dt>
+    <dd class="text-gray-800 whitespace-pre-wrap">{{ br.reality_check }}</dd>
+  </div>
+  {% endif %}
+  {% if br.ai_perception %}
+  <div class="md:col-span-2">
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "AI perception" %}</dt>
+    <dd class="text-gray-800 whitespace-pre-wrap">{{ br.ai_perception }}</dd>
+  </div>
+  {% endif %}
+  {% if br.media_hook %}
+  <div class="md:col-span-2">
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Media hook" %}</dt>
+    <dd class="text-gray-800 whitespace-pre-wrap">{{ br.media_hook }}</dd>
+  </div>
+  {% endif %}
+  {% if br.value_for_decision_makers %}
+  <div>
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Value for decision makers" %}</dt>
+    <dd class="text-gray-800">{{ br.value_for_decision_makers }}</dd>
+  </div>
+  {% endif %}
+  {% if br.communication_goal %}
+  <div>
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Communication goal" %}</dt>
+    <dd class="text-gray-800">{{ br.communication_goal }}</dd>
+  </div>
+  {% endif %}
+  {% if br.trigger_event %}
+  <div>
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Trigger event" %}</dt>
+    <dd class="text-gray-800">{{ br.trigger_event }}</dd>
+  </div>
+  {% endif %}
+  {% if br.trigger_type %}
+  <div>
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Trigger type" %}</dt>
+    <dd class="text-gray-800">{{ br.trigger_type }}</dd>
+  </div>
+  {% endif %}
+  {% if br.innovation_seriousness %}
+  <div>
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Innovative / Serious" %}</dt>
+    <dd class="text-gray-800">{{ br.innovation_seriousness }}</dd>
+  </div>
+  {% endif %}
+  {% if br.communication_gap %}
+  <div class="md:col-span-2">
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Communication gap" %}</dt>
+    <dd class="text-gray-800 whitespace-pre-wrap">{{ br.communication_gap }}</dd>
+  </div>
+  {% endif %}
+  {% if br.press_news %}
+  <div class="md:col-span-2">
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Press / News" %}</dt>
+    <dd class="text-gray-800 whitespace-pre-wrap text-xs">{{ br.press_news }}</dd>
+  </div>
+  {% endif %}
+  {% if br.next_step %}
+  <div class="md:col-span-2">
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Next step" %}</dt>
+    <dd class="text-gray-800 whitespace-pre-wrap">{{ br.next_step }}</dd>
+  </div>
+  {% endif %}
+  <div>
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Fit score" %}</dt>
+    <dd>{% if br.fit_score %}{{ br.fit_score }}/5{% else %}—{% endif %}</dd>
+  </div>
+  <div>
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "PR story potential" %}</dt>
+    <dd>{% if br.story_potential %}{{ br.story_potential }}/5{% else %}—{% endif %}</dd>
+  </div>
+  <div>
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "AI profile clarity" %}</dt>
+    <dd>{{ br.get_ai_profile_clarity_display|default:"—" }}</dd>
+  </div>
+  <div>
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Last contact" %}</dt>
+    <dd>{{ br.last_contact|date:"d.m.Y"|default:"—" }}</dd>
+  </div>
+  <div>
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Update needed" %}</dt>
+    <dd>{% if br.update_needed %}✓{% else %}—{% endif %}</dd>
+  </div>
+  {% if br.currency_check %}
+  <div>
+    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Currency check" %}</dt>
+    <dd class="text-gray-800">{{ br.currency_check }}</dd>
+  </div>
+  {% endif %}
+</dl>
+{% else %}
+<p class="text-gray-400 text-sm">{% trans "No PR briefing yet." %}</p>
+{% endif %}
+{% endwith %}
