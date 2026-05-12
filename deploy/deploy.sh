@@ -64,7 +64,7 @@ uv sync --frozen --no-dev
 # Ensure the service user (insyrtcrm) can traverse the project path and execute
 # the venv binaries. uv creates the venv as the calling user, so the service
 # user needs at least +rx on each directory in the path.
-chmod o+rx /srv /srv/python "${REPO_DIR}" "${REPO_DIR}/.venv" "${REPO_DIR}/.venv/bin"
+chmod o+rx "${REPO_DIR}" "${REPO_DIR}/.venv" "${REPO_DIR}/.venv/bin"
 
 # 4. Django
 log "Running migrations..."
