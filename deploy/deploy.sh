@@ -67,9 +67,16 @@ ${MANAGE} migrate --noinput
 log "Collecting static files..."
 ${MANAGE} collectstatic --noinput --clear
 
-# 5. Services — only restart after all pre-restart steps have succeeded
-log "Reloading systemd and restarting services..."
+# 5. Services — install units if missing, then restart
+SYSTEMD_DIR="/etc/systemd/system"
+for unit in insyrtcrm.service insyrtcrm-worker.service; do
+    if [[ ! -f "${SYSTEMD_DIR}/${unit}" ]]; then
+        log "Installing ${unit}..."
+        sudo cp "${REPO_DIR}/deploy/systemd/${unit}" "${SYSTEMD_DIR}/${unit}"
+    fi
+done
 sudo systemctl daemon-reload
+sudo systemctl enable --now insyrtcrm.service insyrtcrm-worker.service
 sudo systemctl restart insyrtcrm.service insyrtcrm-worker.service
 
 # 6. Health check
