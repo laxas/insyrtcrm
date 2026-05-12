@@ -61,10 +61,13 @@ log "Syncing dependencies (uv sync)..."
 cd "${REPO_DIR}"
 uv sync --frozen --no-dev
 
-# Ensure the service user (insyrtcrm) can traverse the project path and execute
-# the venv binaries. uv creates the venv as the calling user, so the service
-# user needs at least +rx on each directory in the path.
-chmod o+rx "${REPO_DIR}" "${REPO_DIR}/.venv" "${REPO_DIR}/.venv/bin"
+# Grant the insyrtcrm service user access to the venv via group ownership.
+# uv creates the venv as the calling user; the service user needs to read and
+# execute binaries inside it. chgrp + g+rX is cleaner than world-readable.
+chgrp -R insyrtcrm "${REPO_DIR}/.venv"
+chmod -R g+rX "${REPO_DIR}/.venv"
+# The project root itself must be traversable by the service user.
+chmod o+rx "${REPO_DIR}"
 
 # 4. Django
 log "Running migrations..."
