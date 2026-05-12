@@ -32,30 +32,35 @@ def dashboard(request):
     except ValueError, TypeError:
         aging_threshold = AGING_THRESHOLD_DEFAULT
 
-    # Compute (or serve from cache for standard windows)
+    # Compute (or serve from cache for standard windows).
+    # _get falls back to calling fn() if the cache is unavailable or the key
+    # is None (non-cacheable custom windows).
     from django.core.cache import cache
 
     def _get(key, fn):
-        result = cache.get(key)
-        if result is None:
-            result = fn()
-        return result
-
-    funnel = _get("stats:funnel", pipeline_funnel)
-    dwell = _get("stats:dwell", stage_dwell_times)
-    pf = _get("stats:priority_fit", priority_fit_distribution)
+        if key is not None:
+            try:
+                result = cache.get(key)
+                if result is not None:
+                    return result
+            except Exception:
+                pass
+        return fn()
 
     if days in (7, 30, 90) and not request.GET.get("start"):
+        funnel = _get("stats:funnel", pipeline_funnel)
+        dwell = _get("stats:dwell", stage_dwell_times)
+        pf = _get("stats:priority_fit", priority_fit_distribution)
         by_channel = _get(f"stats:by_channel:{days}", lambda: activities_by_channel(start, end))
         by_user = _get(
             f"stats:by_user_channel:{days}",
             lambda: activities_by_user_channel(start, end),
         )
-        aging = _get(
-            f"stats:aging:{aging_threshold}" if aging_threshold == 30 else None,
-            lambda: aging_report(aging_threshold),
-        )
+        aging = _get(f"stats:aging:{aging_threshold}", lambda: aging_report(aging_threshold))
     else:
+        funnel = pipeline_funnel()
+        dwell = stage_dwell_times()
+        pf = priority_fit_distribution()
         by_channel = activities_by_channel(start, end)
         by_user = activities_by_user_channel(start, end)
         aging = aging_report(aging_threshold)
