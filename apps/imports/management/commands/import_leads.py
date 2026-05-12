@@ -50,12 +50,11 @@ class Command(BaseCommand):
         user = self._resolve_user(options["user"])
 
         try:
-            fh = open(filepath, "rb")  # noqa: SIM115 — need to set .name before yielding
+            fh = open(filepath, "rb")  # noqa: SIM115
         except OSError as exc:
             raise CommandError(f"Cannot open {filepath!r}: {exc}") from exc
 
         with fh:
-            fh.name = filepath
             importer = LeadImporter(fh, on_duplicate=on_duplicate)
 
             if dry_run:
