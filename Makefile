@@ -128,6 +128,22 @@ logs-nginx: ## Tail the nginx access log
 status: ## Show systemd service status
 	sudo systemctl status insyrtcrm.service insyrtcrm-worker.service
 
+# ── Data import ───────────────────────────────────────────────────────────────
+
+.PHONY: import
+import: ## Import leads: make import FILE=path/to/leads.xlsx
+ifndef FILE
+	$(error FILE is required — usage: make import FILE=path/to/leads.xlsx)
+endif
+	$(MANAGE) import_leads "$(FILE)"
+
+.PHONY: import-dry
+import-dry: ## Preview import without writing: make import-dry FILE=path/to/leads.xlsx
+ifndef FILE
+	$(error FILE is required — usage: make import-dry FILE=path/to/leads.xlsx)
+endif
+	$(MANAGE) import_leads "$(FILE)" --dry-run
+
 # ── Deployment ────────────────────────────────────────────────────────────────
 
 .PHONY: deploy
