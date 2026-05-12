@@ -107,20 +107,19 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now insyrtcrm.service insyrtcrm-worker.service
 sudo systemctl restart insyrtcrm.service insyrtcrm-worker.service
 
-# 6. Health checks — local first (direct to uvicorn), then via nginx+TLS
-log "Running local health check at ${LOCAL_HEALTH_URL}..."
-LOCAL_STATUS=$(curl --silent --output /dev/null --write-out "%{http_code}" \
-    --max-time 10 "${LOCAL_HEALTH_URL}" || echo "000")
-if [[ "${LOCAL_STATUS}" != "200" ]]; then
-    die "Local health check returned HTTP ${LOCAL_STATUS} — check journalctl -u insyrtcrm.service"
-fi
-log "Local health check passed (HTTP 200)."
+# 6. Health checks — retry for up to 30 s to give uvicorn time to start
+_wait_for_http() {
+    local url="$1" label="$2" tries=6 status
+    for ((i=1; i<=tries; i++)); do
+        status=$(curl --silent --output /dev/null --write-out "%{http_code}" \
+            --max-time 5 "${url}" 2>/dev/null || echo "000")
+        [[ "${status}" == "200" ]] && { log "${label} passed (HTTP 200)."; return 0; }
+        log "${label}: attempt ${i}/${tries} returned HTTP ${status} — waiting 5 s..."
+        sleep 5
+    done
+    die "${label} still returning HTTP ${status} after ${tries} attempts"
+}
 
-log "Running external health check at ${HEALTH_URL}..."
-EXT_STATUS=$(curl --silent --output /dev/null --write-out "%{http_code}" \
-    --max-time 10 "${HEALTH_URL}" || echo "000")
-if [[ "${EXT_STATUS}" != "200" ]]; then
-    die "External health check returned HTTP ${EXT_STATUS} — check nginx config and TLS cert"
-fi
-log "External health check passed (HTTP 200)."
+_wait_for_http "${LOCAL_HEALTH_URL}" "Local health check (uvicorn)"
+_wait_for_http "${HEALTH_URL}"       "External health check (nginx+TLS)"
 log "Deploy of '${GIT_REF}' complete."
