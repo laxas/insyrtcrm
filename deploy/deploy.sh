@@ -74,7 +74,7 @@ uv sync --frozen --no-dev
 # Transfer venv ownership to the service user so systemd can exec the binaries.
 sudo chown -R insyrtcrm:insyrtcrm "${REPO_DIR}/.venv"
 # Make the Python runtime world-traversable (lives in /opt, not a home dir).
-sudo chmod -R o+rx /opt/uv-python
+[[ -d /opt/uv-python ]] && sudo chmod -R o+rx /opt/uv-python
 # The project root must be traversable by the service user.
 chmod o+rx "${REPO_DIR}"
 
