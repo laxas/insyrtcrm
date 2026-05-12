@@ -1,0 +1,67 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Import Preview" %} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a> &rsaquo;
+  <a href="{% url 'admin:import_upload' %}">{% trans "Import Leads" %}</a> &rsaquo;
+  {% trans "Preview" %}
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>{% trans "Import Preview" %}</h1>
+
+<p>
+  <strong>{% trans "New" %}:</strong> {{ result.new_count }} &nbsp;
+  <strong>{% trans "Update" %}:</strong> {{ result.update_count }} &nbsp;
+  <strong>{% trans "Skip" %}:</strong> {{ result.skip_count }} &nbsp;
+  <strong>{% trans "Errors" %}:</strong> {{ result.error_count }}
+</p>
+
+{% if result.error_count > 0 %}
+<div class="errornote">
+  {% blocktrans count n=result.error_count %}{{ n }} row has errors and will be skipped.{% plural %}{{ n }} rows have errors and will be skipped.{% endblocktrans %}
+</div>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  <input type="hidden" name="token" value="{{ token }}">
+  <input type="hidden" name="on_duplicate" value="{{ on_duplicate }}">
+
+  <table id="result-list" class="import-preview">
+    <thead>
+      <tr>
+        <th>{% trans "Row" %}</th>
+        <th>{% trans "Status" %}</th>
+        <th>{% trans "Company" %}</th>
+        <th>{% trans "Issues" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in result.rows %}
+      <tr class="{% cycle 'row1' 'row2' %}">
+        <td>{{ row.row_number }}</td>
+        <td>
+          {% if row.status == "new" %}<span style="color:green">{% trans "New" %}</span>
+          {% elif row.status == "duplicate_update" %}<span style="color:blue">{% trans "Update" %}</span>
+          {% elif row.status == "duplicate_skip" %}<span style="color:grey">{% trans "Skip" %}</span>
+          {% else %}<span style="color:red">{% trans "Error" %}</span>
+          {% endif %}
+        </td>
+        <td>{{ row.company_name }}</td>
+        <td>{{ row.issues|join:", " }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="submit-row">
+    <input type="submit" name="action" value="{% trans 'Confirm import' %}" class="default">
+    <a href="{% url 'admin:import_upload' %}" class="button cancel-link">{% trans "Cancel" %}</a>
+  </div>
+</form>
+{% endblock %}

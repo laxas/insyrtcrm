@@ -16,6 +16,39 @@ def normalize_domain(raw: str) -> str:
     return domain
 
 
+def parse_address(raw: str) -> dict[str, str]:
+    """
+    Parse a free-text German/Austrian/Swiss address into street/postcode/city/country.
+
+    Handles two common formats from the Google Sheet export:
+      "Street, Postcode, City, Country"   e.g. "Kantstraße 127, 10625, Berlin, Deutschland"
+      "Street, Postcode City"             e.g. "Jörg-Syrlin-Straße 6, 73079 Süßen"
+    """
+    empty = {"street": "", "postcode": "", "city": "", "country": ""}
+    if not raw or not raw.strip():
+        return empty
+
+    parts = [p.strip() for p in raw.split(",")]
+    parts = [p for p in parts if p]
+
+    postcode_re = re.compile(r"^(\d{4,5})\s*(.*)")
+    for i, part in enumerate(parts):
+        m = postcode_re.match(part)
+        if m:
+            postcode = m.group(1)
+            city_in_segment = m.group(2).strip()
+            street = ", ".join(parts[:i])
+            if city_in_segment:
+                city = city_in_segment
+                country = parts[i + 1] if i + 1 < len(parts) else ""
+            else:
+                city = parts[i + 1] if i + 1 < len(parts) else ""
+                country = parts[i + 2] if i + 2 < len(parts) else ""
+            return {"street": street, "postcode": postcode, "city": city, "country": country}
+
+    return {"street": raw.strip(), "postcode": "", "city": "", "country": ""}
+
+
 class Stage(models.Model):
     name_de = models.CharField(_("Name (DE)"), max_length=100)
     name_en = models.CharField(_("Name (EN)"), max_length=100)
@@ -37,10 +70,16 @@ class Company(models.Model):
     domain = models.CharField(_("Domain"), max_length=255, blank=True, db_index=True)
     location = models.CharField(_("Location"), max_length=255, blank=True)
     industry = models.CharField(_("Industry / Tech focus"), max_length=255, blank=True)
-    product = models.CharField(_("Product / Technology"), max_length=255, blank=True)
-    size = models.CharField(_("Company size"), max_length=100, blank=True)
+    product = models.TextField(_("Product / Technology"), blank=True)
+    size = models.TextField(_("Company size"), blank=True)
     investors = models.TextField(_("Investors / Funding"), blank=True)
+    b2b_technology = models.TextField(_("B2B Technology"), blank=True)
     source = models.CharField(_("Source"), max_length=255, blank=True)
+    # Structured address — parsed from the free-text location field at import time
+    street = models.CharField(_("Street"), max_length=255, blank=True)
+    postcode = models.CharField(_("Postcode"), max_length=20, blank=True)
+    city = models.CharField(_("City"), max_length=255, blank=True)
+    country = models.CharField(_("Country"), max_length=100, blank=True)
     owner = models.ForeignKey(
         User,
         null=True,
@@ -133,8 +172,8 @@ class Contact(models.Model):
     full_name = models.CharField(_("Full name"), max_length=255, blank=True)
     position = models.CharField(_("Position"), max_length=255, blank=True)
     email = models.EmailField(_("Email"), blank=True)
-    phone = models.CharField(_("Phone"), max_length=100, blank=True)
-    linkedin_url = models.URLField(_("LinkedIn URL"), blank=True)
+    phone = models.TextField(_("Phone"), blank=True)
+    linkedin_url = models.URLField(_("LinkedIn URL"), max_length=500, blank=True)
 
     class Meta:
         verbose_name = _("Contact")
@@ -176,9 +215,9 @@ class PRBriefing(models.Model):
     value_for_decision_makers = models.TextField(_("Value for decision makers"), blank=True)
     communication_goal = models.TextField(_("Communication goal"), blank=True)
     trigger_event = models.TextField(_("Trigger event"), blank=True)
-    trigger_type = models.CharField(_("Trigger type"), max_length=255, blank=True)
+    trigger_type = models.TextField(_("Trigger type"), blank=True)
     communication_gap = models.TextField(_("Communication gap"), blank=True)
-    innovation_seriousness = models.CharField(_("Innovative / Serious"), max_length=255, blank=True)
+    innovation_seriousness = models.TextField(_("Innovative / Serious"), blank=True)
     story_potential = models.PositiveSmallIntegerField(
         _("PR story potential (1-5)"), null=True, blank=True, choices=SCORE_CHOICES
     )
