@@ -6,10 +6,15 @@ set -euo pipefail
 
 DB_NAME="${DB_NAME:-insyrtcrm}"
 DB_USER="${DB_USER:-insyrtcrm}"
-# Pass DB_PASSWORD via env or it will be prompted
-DB_PASSWORD="${DB_PASSWORD:-}"
+ENV_FILE="/etc/insyrtcrm/insyrtcrm.env"
 
-if [[ -z "$DB_PASSWORD" ]]; then
+# Prefer the password already committed to the env file so the DB role
+# always matches what Django uses. Fall back to a manual prompt.
+if [[ -z "${DB_PASSWORD:-}" ]] && [[ -r "${ENV_FILE}" ]]; then
+    DB_PASSWORD="$(grep -E '^DB_PASSWORD=' "${ENV_FILE}" | cut -d= -f2- | head -1)"
+fi
+
+if [[ -z "${DB_PASSWORD:-}" ]]; then
     read -rsp "Password for PostgreSQL role '${DB_USER}': " DB_PASSWORD
     echo
 fi
