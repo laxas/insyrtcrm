@@ -18,10 +18,12 @@ log() { echo "[deploy] $*"; }
 die() { echo "[deploy] ERROR: $*" >&2; exit 1; }
 
 # Load secrets so manage.py commands have access to DB creds, SECRET_KEY, etc.
-if [[ -f "${ENV_FILE}" ]]; then
+# Use sudo cat — the file is owned root:insyrtcrm (0640) and the deploy user
+# may not be in the insyrtcrm group.
+if sudo test -f "${ENV_FILE}"; then
     set -a
     # shellcheck source=/dev/null
-    source "${ENV_FILE}"
+    source <(sudo cat "${ENV_FILE}")
     set +a
 else
     die "${ENV_FILE} not found — run create_service_user.sh and fill in secrets first."
