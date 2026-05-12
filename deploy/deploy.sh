@@ -8,7 +8,7 @@ REPO_DIR="/srv/python/insyrtcrm"
 REPO_URL="${REPO_URL:-git@github.com:laxas/insyrtcrm.git}"
 VENV="${REPO_DIR}/.venv"
 MANAGE="${VENV}/bin/python ${REPO_DIR}/manage.py"
-HEALTH_URL="${HEALTH_URL:-https://localhost/health/}"
+HEALTH_URL="${HEALTH_URL:-https://insyrtcrm.laxas.de/health/}"
 GIT_REF="${1:-main}"
 ENV_FILE="/etc/insyrtcrm/insyrtcrm.env"
 
@@ -67,7 +67,7 @@ ${MANAGE} migrate --noinput
 log "Collecting static files..."
 ${MANAGE} collectstatic --noinput --clear
 
-# 5. Services — install units if missing, then restart
+# 5. Services — install units and nginx config if missing, then restart
 SYSTEMD_DIR="/etc/systemd/system"
 for unit in insyrtcrm.service insyrtcrm-worker.service; do
     if [[ ! -f "${SYSTEMD_DIR}/${unit}" ]]; then
@@ -75,6 +75,16 @@ for unit in insyrtcrm.service insyrtcrm-worker.service; do
         sudo cp "${REPO_DIR}/deploy/systemd/${unit}" "${SYSTEMD_DIR}/${unit}"
     fi
 done
+
+NGINX_CONF="/etc/nginx/sites-available/insyrtcrm"
+if [[ ! -f "${NGINX_CONF}" ]]; then
+    log "Installing nginx config..."
+    sudo cp "${REPO_DIR}/deploy/nginx/insyrtcrm.conf" "${NGINX_CONF}"
+    sudo ln -sf "${NGINX_CONF}" /etc/nginx/sites-enabled/insyrtcrm
+    sudo nginx -t
+    sudo systemctl reload nginx
+fi
+
 sudo systemctl daemon-reload
 sudo systemctl enable --now insyrtcrm.service insyrtcrm-worker.service
 sudo systemctl restart insyrtcrm.service insyrtcrm-worker.service
