@@ -18,8 +18,8 @@ from django.views.generic import DetailView, ListView
 
 from apps.accounts.models import DEFAULT_LIST_COLUMNS, UserPreferences
 from apps.activities.models import Activity
-from apps.leads.forms import LeadFilterForm, StageTransitionForm
-from apps.leads.models import Company, Stage
+from apps.leads.forms import LeadCreateForm, LeadFilterForm, StageTransitionForm
+from apps.leads.models import Company, Contact, PRBriefing, Stage
 
 # ---------------------------------------------------------------------------
 # Column definitions
@@ -31,6 +31,9 @@ ALL_COLUMNS: list[dict] = [
     {"key": "stage", "label": _("Stage"), "sortable": False},
     {"key": "priority", "label": _("Priority"), "sortable": True},
     {"key": "fit", "label": _("Fit"), "sortable": True},
+    {"key": "story_potential", "label": _("PR potential"), "sortable": True},
+    {"key": "ai_profile", "label": _("AI profile"), "sortable": False},
+    {"key": "next_step", "label": _("Next step"), "sortable": False},
     {"key": "industry", "label": _("Industry"), "sortable": True},
     {"key": "owner", "label": _("Owner"), "sortable": False},
     {"key": "size", "label": _("Size"), "sortable": False},
@@ -43,6 +46,7 @@ SORT_FIELDS = {
     "domain": "domain",
     "priority": "prbriefing__priority",
     "fit": "prbriefing__fit_score",
+    "story_potential": "prbriefing__story_potential",
     "industry": "industry",
     "last_activity": "last_activity_at",
 }
@@ -101,6 +105,24 @@ def _build_queryset(params: dict):
 
     if channel := params.get("channel"):
         qs = qs.filter(last_activity_channel=channel)
+
+    if story := params.get("story_potential"):
+        qs = qs.filter(prbriefing__story_potential=story)
+
+    if ai_clarity := params.get("ai_profile_clarity"):
+        qs = qs.filter(prbriefing__ai_profile_clarity=ai_clarity)
+
+    has_response = params.get("has_response")
+    if has_response == "yes":
+        qs = qs.filter(activities__direction=Activity.Direction.IN).distinct()
+    elif has_response == "no":
+        responded_pks = Company.objects.filter(activities__direction=Activity.Direction.IN).values(
+            "pk"
+        )
+        qs = qs.exclude(pk__in=responded_pks)
+
+    if contacted_by_id := params.get("contacted_by"):
+        qs = qs.filter(activities__performed_by_id=contacted_by_id).distinct()
 
     if days := params.get("days_since_activity"):
         try:
@@ -167,6 +189,12 @@ class LeadDetailView(LoginRequiredMixin, DetailView):
         ctx["stages"] = Stage.objects.all()
         ctx["transition_form"] = StageTransitionForm()
         ctx["channels"] = Activity.Channel
+        ctx["last_activity"] = (
+            Activity.objects.filter(company=self.object)
+            .select_related("performed_by")
+            .order_by("-occurred_at")
+            .first()
+        )
         return ctx
 
 
@@ -265,13 +293,101 @@ def save_columns_view(request):
 
 
 # ---------------------------------------------------------------------------
-# CSV export
+# Lead create
+# ---------------------------------------------------------------------------
+
+
+@login_required
+def lead_create_view(request):
+    if request.method == "POST":
+        form = LeadCreateForm(request.POST)
+        if form.is_valid():
+            with transaction.atomic():
+                company = form.save()
+                # Create first contact if any contact field is filled
+                first_name = form.cleaned_data.get("contact_first_name", "")
+                last_name = form.cleaned_data.get("contact_last_name", "")
+                contact_data = {
+                    "salutation": form.cleaned_data.get("contact_salutation", ""),
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "full_name": f"{first_name} {last_name}".strip(),
+                    "position": form.cleaned_data.get("contact_position", ""),
+                    "email": form.cleaned_data.get("contact_email", ""),
+                    "phone": form.cleaned_data.get("contact_phone", ""),
+                    "linkedin_url": form.cleaned_data.get("contact_linkedin", ""),
+                }
+                if any(v for k, v in contact_data.items() if k != "full_name"):
+                    Contact.objects.create(company=company, **contact_data)
+                # Create PR briefing if any briefing field is filled
+                priority = form.cleaned_data.get("priority", "")
+                fit = form.cleaned_data.get("fit_score", "")
+                story = form.cleaned_data.get("story_potential", "")
+                next_step = form.cleaned_data.get("next_step", "")
+                if any([priority, fit, story, next_step]):
+                    PRBriefing.objects.create(
+                        company=company,
+                        priority=priority,
+                        fit_score=int(fit) if fit else None,
+                        story_potential=int(story) if story else None,
+                        next_step=next_step,
+                    )
+            messages.success(request, _('Lead "%(name)s" created.') % {"name": company.name})
+            return HttpResponseRedirect(reverse("lead-detail", kwargs={"pk": company.pk}))
+    else:
+        form = LeadCreateForm()
+    return render(request, "leads/create.html", {"form": form})
+
+
+# ---------------------------------------------------------------------------
+# CSV / XLSX export
 # ---------------------------------------------------------------------------
 
 
 @login_required
 def help_view(request):
     return render(request, "help/index.html", {})
+
+
+def _export_rows(qs):
+    """Yield header + data rows for export (shared by CSV and XLSX)."""
+    yield [
+        "Firma",
+        "Domain",
+        "Stage",
+        "Priorität",
+        "Fit",
+        "PR-Potenzial",
+        "KI-Profil",
+        "Nächster Schritt",
+        "Branche",
+        "Größe",
+        "Standort",
+        "Source",
+        "Owner",
+        "Letzte Aktivität",
+    ]
+    for c in qs:
+        br = getattr(c, "prbriefing", None)
+        ai_display = ""
+        if br and br.ai_profile_clarity:
+            ai_display = br.get_ai_profile_clarity_display()
+        yield [
+            c.name,
+            c.domain,
+            c.current_stage.name_de if c.current_stage else "",
+            br.priority if br else "",
+            br.fit_score if br else "",
+            br.story_potential if br else "",
+            ai_display,
+            br.next_step if br else "",
+            c.industry,
+            c.size,
+            c.city or c.location,
+            c.source,
+            c.owner.get_full_name() or c.owner.username if c.owner else "",
+            c.last_activity_at.strftime("%Y-%m-%d") if getattr(c, "last_activity_at", None) else "",
+        ]
 
 
 @login_required
@@ -282,38 +398,27 @@ def csv_export_view(request):
     response = HttpResponse(content_type="text/csv; charset=utf-8")
     response["Content-Disposition"] = 'attachment; filename="leads.csv"'
     writer = csv.writer(response)
-    writer.writerow(
-        [
-            "Firma",
-            "Domain",
-            "Stage",
-            "Priorität",
-            "Fit",
-            "Branche",
-            "Größe",
-            "Standort",
-            "Owner",
-            "Letzte Aktivität",
-        ]
+    for row in _export_rows(qs):
+        writer.writerow(row)
+    return response
+
+
+@login_required
+def xlsx_export_view(request):
+    qs = _build_queryset(request.GET)
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Leads"
+    for row in _export_rows(qs):
+        ws.append(row)
+    buf = io.BytesIO()
+    wb.save(buf)
+    buf.seek(0)
+    response = HttpResponse(
+        buf.read(),
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
-    for c in qs:
-        br = getattr(c, "prbriefing", None)
-        writer.writerow(
-            [
-                c.name,
-                c.domain,
-                c.current_stage.name_de if c.current_stage else "",
-                br.priority if br else "",
-                br.fit_score if br else "",
-                c.industry,
-                c.size,
-                c.city or c.location,
-                c.owner.get_full_name() or c.owner.username if c.owner else "",
-                c.last_activity_at.strftime("%Y-%m-%d")
-                if getattr(c, "last_activity_at", None)
-                else "",
-            ]
-        )
+    response["Content-Disposition"] = 'attachment; filename="leads.xlsx"'
     return response
 
 

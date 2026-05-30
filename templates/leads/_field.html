@@ -1,0 +1,9 @@
+{% load i18n %}
+<div>
+  <label class="text-xs font-medium text-gray-500 block mb-1">
+    {{ field.label }}{% if required %} <span class="text-red-500">*</span>{% endif %}
+  </label>
+  {{ field }}
+  {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+  {% if field.help_text %}<p class="text-xs text-gray-400 mt-0.5">{{ field.help_text }}</p>{% endif %}
+</div>
