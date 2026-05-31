@@ -79,6 +79,13 @@
 </form>
 
 {# ---- Bulk actions + column picker ---- #}
+{# Column-picker form lives outside #bulk-form to avoid invalid nested forms.
+   Controls below associate to it via the HTML5 form="columns-form" attribute. #}
+<form method="post" id="columns-form" action="{% url 'save-columns' %}" class="hidden">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+</form>
+
 <form method="post" id="bulk-form">
   {% csrf_token %}
   <input type="hidden" name="next" value="{{ request.get_full_path }}">
@@ -102,20 +109,16 @@
         ☰ {% trans "Columns" %}
       </summary>
       <div class="absolute right-0 z-10 mt-1 bg-white border border-gray-200 rounded shadow-lg p-3 min-w-48">
-        <form method="post" action="{% url 'save-columns' %}">
-          {% csrf_token %}
-          <input type="hidden" name="next" value="{{ request.get_full_path }}">
-          {% for col in all_columns %}
-          <label class="flex items-center gap-2 text-sm py-0.5 cursor-pointer">
-            <input type="checkbox" name="columns" value="{{ col.key }}"
-              {% if col.key in active_columns %}checked{% endif %}>
-            {{ col.label }}
-          </label>
-          {% endfor %}
-          <button type="submit" class="mt-2 w-full text-xs bg-indigo-600 text-white rounded px-2 py-1 hover:bg-indigo-700">
-            {% trans "Save" %}
-          </button>
-        </form>
+        {% for col in all_columns %}
+        <label class="flex items-center gap-2 text-sm py-0.5 cursor-pointer">
+          <input type="checkbox" form="columns-form" name="columns" value="{{ col.key }}"
+            {% if col.key in active_columns %}checked{% endif %}>
+          {{ col.label }}
+        </label>
+        {% endfor %}
+        <button type="submit" form="columns-form" class="mt-2 w-full text-xs bg-indigo-600 text-white rounded px-2 py-1 hover:bg-indigo-700">
+          {% trans "Save" %}
+        </button>
       </div>
     </details>
   </div>

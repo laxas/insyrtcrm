@@ -440,3 +440,23 @@ def test_get_list_columns_falls_back_to_defaults():
     from apps.accounts.models import DEFAULT_LIST_COLUMNS
 
     assert prefs.get_list_columns() == DEFAULT_LIST_COLUMNS
+
+
+@pytest.mark.django_db
+def test_column_picker_form_not_nested_in_bulk_form():
+    """Regression: the column-picker controls must bind to a standalone
+    #columns-form, not the surrounding #bulk-form. Nested <form> tags are
+    dropped by the browser parser, so a nested Save button submitted the
+    bulk-form to the GET-only lead-list (405) instead of save-columns."""
+    user = UserFactory()
+    c = auth_client(user)
+    html = c.get(reverse("lead-list")).content.decode()
+
+    # The dedicated column form posts to save-columns.
+    assert reverse("save-columns") in html
+    assert 'id="columns-form"' in html
+
+    # Column checkboxes and their Save button must reference that form
+    # explicitly so they are not associated with #bulk-form.
+    assert 'form="columns-form" name="columns"' in html
+    assert html.count('form="columns-form"') >= 2  # checkboxes + submit button
