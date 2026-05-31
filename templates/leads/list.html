@@ -11,6 +11,14 @@
        class="text-sm border border-gray-300 rounded px-3 py-1.5 hover:bg-gray-100">
       CSV
     </a>
+    <a href="{% url 'xlsx-export' %}?{{ get_params }}"
+       class="text-sm border border-gray-300 rounded px-3 py-1.5 hover:bg-gray-100">
+      XLSX
+    </a>
+    <a href="{% url 'lead-create' %}"
+       class="text-sm bg-indigo-600 text-white rounded px-3 py-1.5 hover:bg-indigo-700">
+      + {% trans "New lead" %}
+    </a>
   </div>
 </div>
 
@@ -33,12 +41,28 @@
     {{ filter_form.fit }}
   </div>
   <div>
+    <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.story_potential.label }}</label>
+    {{ filter_form.story_potential }}
+  </div>
+  <div>
+    <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.ai_profile_clarity.label }}</label>
+    {{ filter_form.ai_profile_clarity }}
+  </div>
+  <div>
+    <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.has_response.label }}</label>
+    {{ filter_form.has_response }}
+  </div>
+  <div>
     <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.industry.label }}</label>
     {{ filter_form.industry }}
   </div>
   <div>
     <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.owner.label }}</label>
     {{ filter_form.owner }}
+  </div>
+  <div>
+    <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.contacted_by.label }}</label>
+    {{ filter_form.contacted_by }}
   </div>
   <div>
     <label class="text-xs font-medium text-gray-500 block mb-1">{{ filter_form.channel.label }}</label>
@@ -143,6 +167,12 @@
               {% with br=company.prbriefing %}{% if br.priority %}<span class="font-semibold">{{ br.priority }}</span>{% endif %}{% endwith %}
             {% elif col_key == "fit" %}
               {% with br=company.prbriefing %}{% if br.fit_score %}{{ br.fit_score }}/5{% endif %}{% endwith %}
+            {% elif col_key == "story_potential" %}
+              {% with br=company.prbriefing %}{% if br.story_potential %}{{ br.story_potential }}/5{% endif %}{% endwith %}
+            {% elif col_key == "ai_profile" %}
+              {% with br=company.prbriefing %}{% if br.ai_profile_clarity %}<span class="text-xs font-medium">{{ br.get_ai_profile_clarity_display }}</span>{% endif %}{% endwith %}
+            {% elif col_key == "next_step" %}
+              {% with br=company.prbriefing %}{% if br.next_step %}<span class="text-gray-700 truncate max-w-xs block" title="{{ br.next_step }}">{{ br.next_step|truncatechars:60 }}</span>{% endif %}{% endwith %}
             {% elif col_key == "industry" %}
               <span class="text-gray-600 truncate max-w-xs block" title="{{ company.industry }}">{{ company.industry|truncatechars:40 }}</span>
             {% elif col_key == "owner" %}

@@ -1,100 +1,148 @@
 {% load i18n %}
 {% with br=company.prbriefing %}
 {% if br %}
-<dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-sm">
-  {% if br.reality_check %}
-  <div class="md:col-span-2">
-    <dt class="text-xs font-medium text-gray-500 mb-1">⚠ {% trans "Reality check" %}</dt>
-    <dd class="text-gray-800 whitespace-pre-wrap">{{ br.reality_check }}</dd>
-  </div>
-  {% endif %}
-  {% if br.ai_perception %}
-  <div class="md:col-span-2">
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "AI perception" %}</dt>
-    <dd class="text-gray-800 whitespace-pre-wrap">{{ br.ai_perception }}</dd>
-  </div>
-  {% endif %}
-  {% if br.media_hook %}
-  <div class="md:col-span-2">
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Media hook" %}</dt>
-    <dd class="text-gray-800 whitespace-pre-wrap">{{ br.media_hook }}</dd>
-  </div>
-  {% endif %}
-  {% if br.value_for_decision_makers %}
-  <div>
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Value for decision makers" %}</dt>
-    <dd class="text-gray-800">{{ br.value_for_decision_makers }}</dd>
-  </div>
-  {% endif %}
-  {% if br.communication_goal %}
-  <div>
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Communication goal" %}</dt>
-    <dd class="text-gray-800">{{ br.communication_goal }}</dd>
-  </div>
-  {% endif %}
-  {% if br.trigger_event %}
-  <div>
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Trigger event" %}</dt>
-    <dd class="text-gray-800">{{ br.trigger_event }}</dd>
-  </div>
-  {% endif %}
-  {% if br.trigger_type %}
-  <div>
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Trigger type" %}</dt>
-    <dd class="text-gray-800">{{ br.trigger_type }}</dd>
-  </div>
-  {% endif %}
-  {% if br.innovation_seriousness %}
-  <div>
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Innovative / Serious" %}</dt>
-    <dd class="text-gray-800">{{ br.innovation_seriousness }}</dd>
-  </div>
-  {% endif %}
-  {% if br.communication_gap %}
-  <div class="md:col-span-2">
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Communication gap" %}</dt>
-    <dd class="text-gray-800 whitespace-pre-wrap">{{ br.communication_gap }}</dd>
-  </div>
-  {% endif %}
-  {% if br.press_news %}
-  <div class="md:col-span-2">
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Press / News" %}</dt>
-    <dd class="text-gray-800 whitespace-pre-wrap text-xs">{{ br.press_news }}</dd>
-  </div>
-  {% endif %}
+
+{# ---- Sales-Status ---- #}
+<div class="mb-6">
+  <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">{% trans "Sales status" %}</h3>
+  <dl class="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-3 text-sm">
+    <div>
+      <dt class="text-xs text-gray-500 mb-0.5">{% trans "Priority" %}</dt>
+      <dd class="font-semibold">{{ br.priority|default:"—" }}</dd>
+    </div>
+    <div>
+      <dt class="text-xs text-gray-500 mb-0.5">{% trans "Fit score" %}</dt>
+      <dd>{% if br.fit_score %}{{ br.fit_score }}/5{% else %}—{% endif %}</dd>
+    </div>
+    <div>
+      <dt class="text-xs text-gray-500 mb-0.5">{% trans "PR story potential" %}</dt>
+      <dd>{% if br.story_potential %}{{ br.story_potential }}/5{% else %}—{% endif %}</dd>
+    </div>
+    <div>
+      <dt class="text-xs text-gray-500 mb-0.5">{% trans "AI profile clarity" %}</dt>
+      <dd>{{ br.get_ai_profile_clarity_display|default:"—" }}</dd>
+    </div>
+    <div>
+      <dt class="text-xs text-gray-500 mb-0.5">{% trans "Last contact" %}</dt>
+      <dd>{{ br.last_contact|date:"d.m.Y"|default:"—" }}</dd>
+    </div>
+    <div>
+      <dt class="text-xs text-gray-500 mb-0.5">{% trans "Update needed" %}</dt>
+      <dd>{% if br.update_needed %}<span class="text-amber-600 font-medium">✓</span>{% else %}—{% endif %}</dd>
+    </div>
+  </dl>
   {% if br.next_step %}
-  <div class="md:col-span-2">
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Next step" %}</dt>
-    <dd class="text-gray-800 whitespace-pre-wrap">{{ br.next_step }}</dd>
+  <div class="mt-3 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-sm">
+    <span class="text-amber-500 font-bold shrink-0">→</span>
+    <div>
+      <span class="text-xs font-medium text-amber-700 block mb-0.5">{% trans "Next step" %}</span>
+      <span class="text-gray-800 whitespace-pre-wrap">{{ br.next_step }}</span>
+    </div>
   </div>
   {% endif %}
-  <div>
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Fit score" %}</dt>
-    <dd>{% if br.fit_score %}{{ br.fit_score }}/5{% else %}—{% endif %}</dd>
-  </div>
-  <div>
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "PR story potential" %}</dt>
-    <dd>{% if br.story_potential %}{{ br.story_potential }}/5{% else %}—{% endif %}</dd>
-  </div>
-  <div>
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "AI profile clarity" %}</dt>
-    <dd>{{ br.get_ai_profile_clarity_display|default:"—" }}</dd>
-  </div>
-  <div>
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Last contact" %}</dt>
-    <dd>{{ br.last_contact|date:"d.m.Y"|default:"—" }}</dd>
-  </div>
-  <div>
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Update needed" %}</dt>
-    <dd>{% if br.update_needed %}✓{% else %}—{% endif %}</dd>
-  </div>
-  {% if br.currency_check %}
-  <div>
-    <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Currency check" %}</dt>
-    <dd class="text-gray-800">{{ br.currency_check }}</dd>
-  </div>
-  {% endif %}
-</dl>
+</div>
+
+{# ---- Insyrt-Analyse ---- #}
+<div class="mb-6">
+  <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">{% trans "Insyrt analysis" %}</h3>
+  <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+    {% if br.reality_check %}
+    <div class="md:col-span-2">
+      <dt class="text-xs font-medium text-gray-500 mb-1">⚠ {% trans "Reality check" %}</dt>
+      <dd class="text-gray-800 whitespace-pre-wrap">{{ br.reality_check }}</dd>
+    </div>
+    {% endif %}
+    {% if br.value_for_decision_makers %}
+    <div>
+      <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Value for decision makers" %}</dt>
+      <dd class="text-gray-800">{{ br.value_for_decision_makers }}</dd>
+    </div>
+    {% endif %}
+    {% if br.communication_goal %}
+    <div>
+      <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Communication goal" %}</dt>
+      <dd class="text-gray-800">{{ br.communication_goal }}</dd>
+    </div>
+    {% endif %}
+    {% if br.communication_gap %}
+    <div class="md:col-span-2">
+      <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Communication gap" %}</dt>
+      <dd class="text-gray-800 whitespace-pre-wrap">{{ br.communication_gap }}</dd>
+    </div>
+    {% endif %}
+    {% if br.innovation_seriousness %}
+    <div>
+      <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Innovative / Serious" %}</dt>
+      <dd class="text-gray-800">{{ br.innovation_seriousness }}</dd>
+    </div>
+    {% endif %}
+    {% if br.trigger_event %}
+    <div>
+      <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Trigger / Occasion" %}</dt>
+      <dd class="text-gray-800">{{ br.trigger_event }}</dd>
+    </div>
+    {% endif %}
+    {% if br.trigger_type %}
+    <div>
+      <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Trigger type" %}</dt>
+      <dd class="text-gray-800">{{ br.trigger_type }}</dd>
+    </div>
+    {% endif %}
+  </dl>
+</div>
+
+{# ---- KI-/PR-Bewertung ---- #}
+<div class="mb-6">
+  <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">{% trans "AI / PR assessment" %}</h3>
+  <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+    {% if br.ai_perception %}
+    <div class="md:col-span-2">
+      <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "AI perception" %}</dt>
+      <dd class="text-gray-800 whitespace-pre-wrap">{{ br.ai_perception }}</dd>
+    </div>
+    {% endif %}
+    {% if br.media_hook %}
+    <div class="md:col-span-2">
+      <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Media hook" %}</dt>
+      <dd class="text-gray-800 whitespace-pre-wrap">{{ br.media_hook }}</dd>
+    </div>
+    {% endif %}
+    {% if br.press_news %}
+    <div class="md:col-span-2">
+      <dt class="text-xs font-medium text-gray-500 mb-1">{% trans "Press / News" %}</dt>
+      <dd class="text-gray-800 whitespace-pre-wrap text-xs">{{ br.press_news }}</dd>
+    </div>
+    {% endif %}
+  </dl>
+</div>
+
+{# ---- Aktualität ---- #}
+{% if br.research_date or br.last_update or br.currency_check %}
+<div>
+  <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">{% trans "Currency" %}</h3>
+  <dl class="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3 text-sm">
+    {% if br.research_date %}
+    <div>
+      <dt class="text-xs text-gray-500 mb-0.5">{% trans "Research date" %}</dt>
+      <dd>{{ br.research_date|date:"d.m.Y" }}</dd>
+    </div>
+    {% endif %}
+    {% if br.last_update %}
+    <div>
+      <dt class="text-xs text-gray-500 mb-0.5">{% trans "Last update" %}</dt>
+      <dd>{{ br.last_update|date:"d.m.Y" }}</dd>
+    </div>
+    {% endif %}
+    {% if br.currency_check %}
+    <div>
+      <dt class="text-xs text-gray-500 mb-0.5">{% trans "Currency check" %}</dt>
+      <dd class="text-gray-800">{{ br.currency_check }}</dd>
+    </div>
+    {% endif %}
+  </dl>
+</div>
+{% endif %}
+
 {% else %}
 <p class="text-gray-400 text-sm">{% trans "No PR briefing yet." %}</p>
 {% endif %}
