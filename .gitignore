@@ -14,10 +14,14 @@ wheels/
 __pycache__/
 *.sqlite3
 db.sqlite3-journal
+/static/
 /staticfiles/
 /media/
 /static_collected/
 local_settings.py
+
+# Tailwind standalone CLI binary (downloaded by `make css`)
+/bin/
 
 # Environment
 .env

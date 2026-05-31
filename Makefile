@@ -47,6 +47,23 @@ superuser: ## Create a Django superuser interactively
 
 # ── Static files & i18n ───────────────────────────────────────────────────────
 
+TAILWIND_VERSION = v3.4.17
+TAILWIND_BIN     = bin/tailwindcss
+
+$(TAILWIND_BIN):
+	@mkdir -p bin
+	curl -sSL -o $(TAILWIND_BIN) \
+		https://github.com/tailwindlabs/tailwindcss/releases/download/$(TAILWIND_VERSION)/tailwindcss-linux-x64
+	chmod +x $(TAILWIND_BIN)
+
+.PHONY: css
+css: $(TAILWIND_BIN) ## Build the purged Tailwind stylesheet (assets/css/app.css)
+	$(TAILWIND_BIN) -c tailwind.config.js -i tailwind/input.css -o assets/css/app.css --minify
+
+.PHONY: css-watch
+css-watch: $(TAILWIND_BIN) ## Rebuild Tailwind CSS on change (dev)
+	$(TAILWIND_BIN) -c tailwind.config.js -i tailwind/input.css -o assets/css/app.css --watch
+
 .PHONY: static
 static: ## Collect static files
 	$(MANAGE) collectstatic --noinput --clear

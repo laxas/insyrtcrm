@@ -70,6 +70,25 @@ sudo rm -rf "${REPO_DIR}/.venv"
 uv python install 3.14
 uv sync --frozen --no-dev
 
+# 3b. Frontend assets — rebuild the purged Tailwind stylesheet from the current
+#     templates before collectstatic, so the committed CSS can never go stale.
+#     Uses the standalone Tailwind CLI (no Node toolchain). The ~43 MB binary is
+#     cached in bin/ (gitignored, survives `git reset --hard`) and only fetched
+#     when missing. Keep TAILWIND_VERSION in sync with the Makefile.
+TAILWIND_VERSION="v3.4.17"
+TAILWIND_BIN="${REPO_DIR}/bin/tailwindcss"
+if [[ ! -x "${TAILWIND_BIN}" ]]; then
+    log "Downloading Tailwind CLI ${TAILWIND_VERSION}..."
+    mkdir -p "${REPO_DIR}/bin"
+    curl -sSL -o "${TAILWIND_BIN}" \
+        "https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-x64"
+    chmod +x "${TAILWIND_BIN}"
+fi
+log "Building Tailwind CSS..."
+"${TAILWIND_BIN}" -c "${REPO_DIR}/tailwind.config.js" \
+    -i "${REPO_DIR}/tailwind/input.css" \
+    -o "${REPO_DIR}/assets/css/app.css" --minify
+
 # Mirror the permission pattern used by other projects on this server:
 # owner=croessmann, group=insyrtcrm, with group r+X on all files.
 # The insyrtcrm service user is in the insyrtcrm group, so it can read and

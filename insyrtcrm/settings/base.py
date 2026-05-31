@@ -99,6 +99,9 @@ TIME_ZONE = "Europe/Berlin"
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "static"
+# Project-level source assets (built Tailwind CSS, vendored JS). App-level
+# `static/` dirs are still auto-discovered; this only adds the shared bundle.
+STATICFILES_DIRS = [BASE_DIR / "assets"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
