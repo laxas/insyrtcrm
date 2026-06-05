@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 
-from apps.leads.models import Company, PRBriefing, Stage
+from apps.leads.models import Company, PRBriefing, PromptTemplate, Stage
 
 
 class LeadFilterForm(forms.Form):
@@ -95,6 +95,24 @@ class StageTransitionForm(forms.Form):
         required=False,
         widget=forms.Textarea(attrs={"rows": 2}),
     )
+
+
+class PromptTemplateForm(forms.ModelForm):
+    """Create / edit a prompt template (Prompt-Manager role only)."""
+
+    class Meta:
+        model = PromptTemplate
+        fields = ["name", "description", "body", "is_active"]
+        widgets = {
+            "body": forms.Textarea(
+                attrs={
+                    "rows": 14,
+                    "id": "prompt-body",
+                    "class": "font-mono",
+                    "placeholder": _("Write your prompt and drop variables from the palette…"),
+                }
+            ),
+        }
 
 
 class LeadCreateForm(forms.ModelForm):

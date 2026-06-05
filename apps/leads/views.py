@@ -5,7 +5,7 @@ from datetime import timedelta
 
 import openpyxl
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.db.models import OuterRef, Q, Subquery
@@ -18,8 +18,14 @@ from django.views.generic import DetailView, ListView
 
 from apps.accounts.models import DEFAULT_LIST_COLUMNS, UserPreferences
 from apps.activities.models import Activity
-from apps.leads.forms import LeadCreateForm, LeadFilterForm, StageTransitionForm
-from apps.leads.models import Company, Contact, PRBriefing, Stage
+from apps.leads.forms import (
+    LeadCreateForm,
+    LeadFilterForm,
+    PromptTemplateForm,
+    StageTransitionForm,
+)
+from apps.leads.models import Company, Contact, PRBriefing, PromptTemplate, Stage
+from apps.leads.prompt_variables import VARIABLE_GROUPS
 
 # ---------------------------------------------------------------------------
 # Column definitions
@@ -226,6 +232,33 @@ def tab_activities(request, pk):
         request,
         "leads/partials/tab_activities.html",
         {"company": company, "activities": activities},
+    )
+
+
+@login_required
+def tab_prompt(request, pk):
+    """Prompt tab: pick an active template, render it against this company (FR-PT)."""
+    company = get_object_or_404(
+        Company.objects.select_related("current_stage", "owner", "prbriefing"), pk=pk
+    )
+    templates = PromptTemplate.objects.filter(is_active=True)
+    selected = None
+    rendered = ""
+    template_id = request.GET.get("template")
+    if template_id:
+        selected = templates.filter(pk=template_id).first()
+        if selected:
+            rendered = selected.render(company)
+    return render(
+        request,
+        "leads/partials/tab_prompt.html",
+        {
+            "company": company,
+            "templates": templates,
+            "selected": selected,
+            "rendered": rendered,
+            "can_manage_prompts": request.user.has_perm("leads.manage_prompttemplate"),
+        },
     )
 
 
@@ -509,3 +542,75 @@ def letter_log_view(request):
         _("%(n)s letter-sent activities logged.") % {"n": len(ids)},
     )
     return HttpResponseRedirect(reverse("lead-list"))
+
+
+# ---------------------------------------------------------------------------
+# Prompt templates (FR-PT) — configuration is gated to the Prompt-Manager role
+# ---------------------------------------------------------------------------
+
+
+@login_required
+@permission_required("leads.manage_prompttemplate", raise_exception=True)
+def prompt_template_list(request):
+    templates = PromptTemplate.objects.all()
+    return render(request, "prompts/list.html", {"templates": templates})
+
+
+@login_required
+@permission_required("leads.manage_prompttemplate", raise_exception=True)
+def prompt_template_create(request):
+    if request.method == "POST":
+        form = PromptTemplateForm(request.POST)
+        if form.is_valid():
+            template = form.save(commit=False)
+            template.created_by = request.user
+            template.save()
+            messages.success(
+                request, _('Prompt template "%(name)s" created.') % {"name": template.name}
+            )
+            return HttpResponseRedirect(reverse("prompt-list"))
+    else:
+        form = PromptTemplateForm()
+    return render(
+        request,
+        "prompts/form.html",
+        {"form": form, "variable_groups": VARIABLE_GROUPS, "is_create": True},
+    )
+
+
+@login_required
+@permission_required("leads.manage_prompttemplate", raise_exception=True)
+def prompt_template_edit(request, pk):
+    template = get_object_or_404(PromptTemplate, pk=pk)
+    if request.method == "POST":
+        form = PromptTemplateForm(request.POST, instance=template)
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request, _('Prompt template "%(name)s" saved.') % {"name": template.name}
+            )
+            return HttpResponseRedirect(reverse("prompt-list"))
+    else:
+        form = PromptTemplateForm(instance=template)
+    return render(
+        request,
+        "prompts/form.html",
+        {
+            "form": form,
+            "variable_groups": VARIABLE_GROUPS,
+            "is_create": False,
+            "template": template,
+        },
+    )
+
+
+@login_required
+@permission_required("leads.manage_prompttemplate", raise_exception=True)
+def prompt_template_delete(request, pk):
+    template = get_object_or_404(PromptTemplate, pk=pk)
+    if request.method == "POST":
+        name = template.name
+        template.delete()
+        messages.success(request, _('Prompt template "%(name)s" deleted.') % {"name": name})
+        return HttpResponseRedirect(reverse("prompt-list"))
+    return render(request, "prompts/confirm_delete.html", {"template": template})

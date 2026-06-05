@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Prompt templates" %} – InsyrtCRM{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">{% trans "Prompt templates" %}</h1>
+  <a href="{% url 'prompt-create' %}"
+    class="bg-indigo-600 text-white text-sm rounded px-4 py-2 hover:bg-indigo-700">
+    + {% trans "New template" %}
+  </a>
+</div>
+
+{% if templates %}
+<div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 border-b border-gray-200 text-left text-xs text-gray-500 uppercase tracking-wide">
+      <tr>
+        <th class="px-4 py-3 font-medium">{% trans "Name" %}</th>
+        <th class="px-4 py-3 font-medium">{% trans "Description" %}</th>
+        <th class="px-4 py-3 font-medium">{% trans "Status" %}</th>
+        <th class="px-4 py-3 font-medium text-right">{% trans "Actions" %}</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for t in templates %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-3 font-medium text-gray-900">{{ t.name }}</td>
+        <td class="px-4 py-3 text-gray-500">{{ t.description|default:"—" }}</td>
+        <td class="px-4 py-3">
+          {% if t.is_active %}
+          <span class="rounded-full bg-green-50 text-green-700 text-xs px-2 py-0.5">{% trans "Active" %}</span>
+          {% else %}
+          <span class="rounded-full bg-gray-100 text-gray-500 text-xs px-2 py-0.5">{% trans "Inactive" %}</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3 text-right whitespace-nowrap">
+          <a href="{% url 'prompt-edit' t.pk %}" class="text-indigo-600 hover:underline">{% trans "Edit" %}</a>
+          <a href="{% url 'prompt-delete' t.pk %}" class="text-red-600 hover:underline ml-3">{% trans "Delete" %}</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="bg-white border border-gray-200 rounded-lg p-8 text-center text-gray-400 text-sm">
+  {% trans "No prompt templates yet." %}
+  <a href="{% url 'prompt-create' %}" class="text-indigo-600 hover:underline">{% trans "Create the first one" %}</a>.
+</div>
+{% endif %}
+{% endblock %}

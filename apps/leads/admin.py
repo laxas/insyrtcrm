@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from .models import Company, Contact, PRBriefing, Stage, StageTransition
+from .models import Company, Contact, PRBriefing, PromptTemplate, Stage, StageTransition
 
 
 @admin.register(Stage)
@@ -112,6 +112,14 @@ class PRBriefingAdmin(admin.ModelAdmin):
     list_filter = ("priority", "fit_score", "story_potential", "update_needed")
     search_fields = ("company__name",)
     autocomplete_fields = ("company",)
+
+
+@admin.register(PromptTemplate)
+class PromptTemplateAdmin(admin.ModelAdmin):
+    list_display = ("name", "description", "is_active", "updated_at")
+    list_filter = ("is_active",)
+    search_fields = ("name", "description", "body")
+    readonly_fields = ("created_by", "created_at", "updated_at")
 
 
 @admin.register(StageTransition)
