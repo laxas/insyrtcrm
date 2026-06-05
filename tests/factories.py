@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 from apps.activities.models import Activity
-from apps.leads.models import Company, Contact, PRBriefing, Stage
+from apps.leads.models import Company, Contact, PRBriefing, PromptTemplate, Stage
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -75,3 +75,12 @@ class ActivityFactory(factory.django.DjangoModelFactory):
     occurred_at = factory.LazyFunction(timezone.now)
     performed_by = factory.SubFactory(UserFactory)
     note = "Test note"
+
+
+class PromptTemplateFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = PromptTemplate
+
+    name = factory.Sequence(lambda n: f"Template {n}")
+    body = "Hello {company_name} in {industry}."
+    is_active = True

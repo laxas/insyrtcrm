@@ -241,6 +241,56 @@ class PRBriefing(models.Model):
         return f"PR Briefing — {self.company}"
 
 
+class PromptTemplate(models.Model):
+    """
+    A reusable text template with ``{variable}`` placeholders (FR-PT).
+
+    Configured centrally by users in the *Prompt-Manager* role and then
+    available to everyone on the lead detail page, where the placeholders are
+    filled from the selected company's data. See ``prompt_variables`` for the
+    list of supported variables and how they resolve.
+    """
+
+    name = models.CharField(_("Name"), max_length=150, unique=True)
+    description = models.CharField(_("Description"), max_length=255, blank=True)
+    body = models.TextField(
+        _("Template body"),
+        help_text=_("Use {variable} placeholders — insert them from the palette."),
+    )
+    is_active = models.BooleanField(
+        _("Active"),
+        default=True,
+        help_text=_("Only active templates can be selected on the lead detail page."),
+    )
+    created_by = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="prompt_templates",
+        verbose_name=_("Created by"),
+    )
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+
+    class Meta:
+        verbose_name = _("Prompt template")
+        verbose_name_plural = _("Prompt templates")
+        ordering = ["name"]
+        permissions = [
+            ("manage_prompttemplate", _("Can create and edit prompt templates")),
+        ]
+
+    def __str__(self) -> str:
+        return self.name
+
+    def render(self, company: Company) -> str:
+        """Fill the template's placeholders from ``company``'s data (FR-PT)."""
+        from apps.leads.prompt_variables import build_variable_context, render_prompt
+
+        return render_prompt(self.body, build_variable_context(company))
+
+
 class StageTransition(models.Model):
     company = models.ForeignKey(
         Company,

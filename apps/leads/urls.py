@@ -18,5 +18,11 @@ urlpatterns = [
     path("leads/<int:pk>/tabs/briefing/", views.tab_briefing, name="tab-briefing"),
     path("leads/<int:pk>/tabs/contacts/", views.tab_contacts, name="tab-contacts"),
     path("leads/<int:pk>/tabs/activities/", views.tab_activities, name="tab-activities"),
+    path("leads/<int:pk>/tabs/prompt/", views.tab_prompt, name="tab-prompt"),
     path("leads/<int:pk>/tabs/history/", views.tab_history, name="tab-history"),
+    # Prompt templates (config — Prompt-Manager role)
+    path("prompts/", views.prompt_template_list, name="prompt-list"),
+    path("prompts/new/", views.prompt_template_create, name="prompt-create"),
+    path("prompts/<int:pk>/edit/", views.prompt_template_edit, name="prompt-edit"),
+    path("prompts/<int:pk>/delete/", views.prompt_template_delete, name="prompt-delete"),
 ]

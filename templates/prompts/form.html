@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% if is_create %}{% trans "New prompt template" %}{% else %}{{ template.name }}{% endif %} – InsyrtCRM{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{% url 'prompt-list' %}" class="text-sm text-gray-500 hover:text-indigo-600">← {% trans "Back to prompt templates" %}</a>
+</div>
+
+<h1 class="text-2xl font-bold text-gray-900 mb-6">
+  {% if is_create %}{% trans "New prompt template" %}{% else %}{% trans "Edit prompt template" %}{% endif %}
+</h1>
+
+<form method="post" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  {% csrf_token %}
+
+  {# ---- Editor ---- #}
+  <div class="lg:col-span-2 bg-white border border-gray-200 rounded-lg p-5 space-y-4">
+    {% if form.non_field_errors %}
+    <div class="bg-red-50 text-red-700 text-sm rounded px-3 py-2">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div>
+      <label for="{{ form.name.id_for_label }}" class="text-sm font-medium text-gray-700 block mb-1">
+        {{ form.name.label }}
+      </label>
+      <input type="text" name="{{ form.name.html_name }}" id="{{ form.name.id_for_label }}"
+        value="{{ form.name.value|default:'' }}" maxlength="150" required
+        class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+      {% if form.name.errors %}<p class="text-red-600 text-xs mt-1">{{ form.name.errors|striptags }}</p>{% endif %}
+    </div>
+
+    <div>
+      <label for="{{ form.description.id_for_label }}" class="text-sm font-medium text-gray-700 block mb-1">
+        {{ form.description.label }}
+      </label>
+      <input type="text" name="{{ form.description.html_name }}" id="{{ form.description.id_for_label }}"
+        value="{{ form.description.value|default:'' }}" maxlength="255"
+        class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+    </div>
+
+    <div>
+      <label for="prompt-body" class="text-sm font-medium text-gray-700 block mb-1">
+        {{ form.body.label }}
+      </label>
+      <textarea name="{{ form.body.html_name }}" id="prompt-body" rows="16"
+        ondragover="event.preventDefault()"
+        class="w-full border border-gray-300 rounded px-3 py-2 text-sm font-mono leading-relaxed"
+        placeholder="{% trans 'Write your prompt and drop variables from the palette…' %}">{{ form.body.value|default:'' }}</textarea>
+      {% if form.body.errors %}<p class="text-red-600 text-xs mt-1">{{ form.body.errors|striptags }}</p>{% endif %}
+      <p class="text-xs text-gray-400 mt-1">
+        {% trans "Drag a variable into the text, or click it to insert at the cursor. Variables look like {company_name}." %}
+      </p>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <input type="checkbox" name="{{ form.is_active.html_name }}" id="{{ form.is_active.id_for_label }}"
+        {% if form.is_active.value %}checked{% endif %}
+        class="rounded border-gray-300">
+      <label for="{{ form.is_active.id_for_label }}" class="text-sm text-gray-700">{{ form.is_active.label }}</label>
+    </div>
+
+    <div class="flex gap-3 pt-2">
+      <button type="submit"
+        class="bg-indigo-600 text-white text-sm rounded px-4 py-2 hover:bg-indigo-700">
+        {% trans "Save" %}
+      </button>
+      <a href="{% url 'prompt-list' %}"
+        class="text-sm border border-gray-300 rounded px-4 py-2 hover:bg-gray-50">
+        {% trans "Cancel" %}
+      </a>
+    </div>
+  </div>
+
+  {# ---- Variable palette ---- #}
+  <div class="bg-white border border-gray-200 rounded-lg p-5 self-start">
+    <h2 class="text-sm font-semibold text-gray-700 mb-1">{% trans "Variables" %}</h2>
+    <p class="text-xs text-gray-400 mb-4">{% trans "Drag or click to insert." %}</p>
+    {% for group in variable_groups %}
+    <div class="mb-4">
+      <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-2">{{ group.label }}</h3>
+      <div class="flex flex-wrap gap-1.5">
+        {% for var in group.variables %}
+        <button type="button" draggable="true" data-token="{{ var.token }}"
+          title="{{ var.label }}"
+          class="prompt-var cursor-grab active:cursor-grabbing text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 rounded px-2 py-1 hover:bg-indigo-100">
+          {{ var.token }}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</form>
+
+<script>
+(function () {
+  const body = document.getElementById('prompt-body');
+
+  function insertAtCursor(text) {
+    const start = body.selectionStart ?? body.value.length;
+    const end = body.selectionEnd ?? body.value.length;
+    body.value = body.value.slice(0, start) + text + body.value.slice(end);
+    const pos = start + text.length;
+    body.setSelectionRange(pos, pos);
+    body.focus();
+  }
+
+  document.querySelectorAll('.prompt-var').forEach(function (chip) {
+    const token = chip.getAttribute('data-token');
+    // Click → insert at cursor.
+    chip.addEventListener('click', function () { insertAtCursor(token); });
+    // Drag → the textarea natively drops text/plain at the drop position.
+    chip.addEventListener('dragstart', function (e) {
+      e.dataTransfer.setData('text/plain', token);
+      e.dataTransfer.effectAllowed = 'copy';
+    });
+  });
+})();
+</script>
+{% endblock %}

@@ -202,6 +202,16 @@ Standard-Stages (konfigurierbar im Admin) / Default stages (configurable in admi
 | FR-I18N-02 | Datumsformate, Zahlen, Sortierung gemäß gewählter Locale. | Date formats, numbers, sorting per selected locale. |
 | FR-I18N-03 | Stage-Namen und Aktivitäts-Ergebnisse haben jeweils einen DE- und EN-Wert. | Stage names and activity outcomes carry both a DE and an EN value. |
 
+### 3.9 Prompt-Vorlagen / Prompt Templates
+
+| ID | Deutsch | English |
+|---|---|---|
+| FR-PT-01 | Das System verwaltet wiederverwendbare Prompt-Vorlagen (Freitext mit `{variable}`-Platzhaltern in geschweiften Klammern). | The system manages reusable prompt templates (free text with `{variable}` placeholders in curly braces). |
+| FR-PT-02 | Verfügbare Variablen leiten sich aus den zu einem Lead/Kunden gespeicherten Daten ab (Firma, primärer Kontakt, PR-Briefing) und lassen sich im Editor per Drag-and-drop (oder Klick) einfügen. | Available variables derive from the data stored for a lead/customer (company, primary contact, PR briefing) and can be inserted in the editor via drag-and-drop (or click). |
+| FR-PT-03 | In der Lead-Detailansicht lässt sich eine aktive Prompt-Vorlage auswählen; der mit den Lead-Daten gefüllte Prompt wird angezeigt und kann kopiert werden. | In the lead detail view an active prompt template can be selected; the prompt filled with the lead's data is displayed and can be copied. |
+| FR-PT-04 | Nur Benutzer der Rolle „Prompt-Manager" (sowie Admins) dürfen Vorlagen anlegen und bearbeiten. Vorlagen stehen allen Benutzern zur Auswahl bereit; normale Benutzer können sie nicht verändern. | Only users in the "Prompt-Manager" role (and Admins) may create and edit templates. Templates are available to all users for selection; normal users cannot modify them. |
+| FR-PT-05 | Unbekannte Platzhalter bleiben beim Rendern unverändert erhalten (Tippfehler werden sichtbar); das System versendet keine Prompts und ruft keine externen KI-Dienste auf. | Unknown placeholders are left intact when rendering (typos stay visible); the system never sends prompts or calls external AI services. |
+
 ---
 
 ## 4. Nicht-funktionale Anforderungen / Non-Functional Requirements

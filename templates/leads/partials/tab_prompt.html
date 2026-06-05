@@ -1,0 +1,61 @@
+{% load i18n %}
+<div>
+  <div class="flex items-end justify-between gap-4 flex-wrap mb-4">
+    <div class="flex-1 min-w-[16rem]">
+      <label for="prompt-select" class="text-xs text-gray-500 block mb-1">
+        {% trans "Prompt template" %}
+      </label>
+      <select id="prompt-select" name="template"
+        class="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-white"
+        hx-get="{% url 'tab-prompt' company.pk %}"
+        hx-target="#tab-content"
+        hx-trigger="change">
+        <option value="">{% trans "— Select a template —" %}</option>
+        {% for t in templates %}
+        <option value="{{ t.pk }}" {% if selected and selected.pk == t.pk %}selected{% endif %}>
+          {{ t.name }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    {% if can_manage_prompts %}
+    <a href="{% url 'prompt-list' %}"
+      class="text-sm text-gray-500 hover:text-indigo-600 whitespace-nowrap">
+      ⚙ {% trans "Manage templates" %}
+    </a>
+    {% endif %}
+  </div>
+
+  {% if not templates %}
+  <p class="text-gray-400 text-sm">
+    {% trans "No prompt templates available yet." %}
+    {% if can_manage_prompts %}
+    <a href="{% url 'prompt-create' %}" class="text-indigo-600 hover:underline">{% trans "Create one" %}</a>.
+    {% endif %}
+  </p>
+  {% elif selected %}
+  <div class="border border-gray-200 rounded-lg overflow-hidden">
+    <div class="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-2">
+      <span class="text-xs font-medium text-gray-600">{{ selected.name }}</span>
+      <button type="button" onclick="copyPrompt(this)"
+        class="text-xs border border-gray-300 rounded px-2 py-1 hover:bg-white">
+        📋 {% trans "Copy" %}
+      </button>
+    </div>
+    <pre id="prompt-output"
+      class="p-4 text-sm text-gray-800 whitespace-pre-wrap font-mono leading-relaxed">{{ rendered }}</pre>
+  </div>
+  <script>
+  function copyPrompt(btn) {
+    const text = document.getElementById('prompt-output').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.innerHTML;
+      btn.innerHTML = '✓ {% trans "Copied" %}';
+      setTimeout(() => { btn.innerHTML = original; }, 1500);
+    });
+  }
+  </script>
+  {% else %}
+  <p class="text-gray-400 text-sm">{% trans "Select a template to generate the prompt." %}</p>
+  {% endif %}
+</div>

@@ -100,6 +100,7 @@
     {% url 'tab-briefing' company.pk as url_briefing %}
     {% url 'tab-contacts' company.pk as url_contacts %}
     {% url 'tab-activities' company.pk as url_activities %}
+    {% url 'tab-prompt' company.pk as url_prompt %}
     {% url 'tab-history' company.pk as url_history %}
     <button class="px-5 py-3 font-medium border-b-2 border-indigo-600 text-indigo-600 tab-btn"
       hx-get="{{ url_briefing }}" hx-target="#tab-content" hx-push-url="false"
@@ -110,6 +111,9 @@
     <button class="px-5 py-3 text-gray-500 hover:text-gray-900 tab-btn"
       hx-get="{{ url_activities }}" hx-target="#tab-content" hx-push-url="false"
       onclick="setActiveTab(this)">{% trans "Activities" %}</button>
+    <button class="px-5 py-3 text-gray-500 hover:text-gray-900 tab-btn"
+      hx-get="{{ url_prompt }}" hx-target="#tab-content" hx-push-url="false"
+      onclick="setActiveTab(this)">{% trans "Prompt" %}</button>
     <button class="px-5 py-3 text-gray-500 hover:text-gray-900 tab-btn"
       hx-get="{{ url_history }}" hx-target="#tab-content" hx-push-url="false"
       onclick="setActiveTab(this)">{% trans "History" %}</button>
